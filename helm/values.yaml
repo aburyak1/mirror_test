@@ -1,0 +1,23 @@
+serviceName: sbpservice
+replicaCount: 2
+
+image:
+  repository: reggitlab.iiko.ru/iikotransport/sbp
+  tag: develop
+  pullPolicy: Always
+
+ingress:
+  domain: iiko.tran.lan
+
+packetbeat: false
+
+env:
+  data:
+    IIKOTRANSPORT_ENVIRONMENT: ru
+
+resources:
+  limits:
+    memory: 1500Mi
+  requests:
+    memory: 500Mi
+

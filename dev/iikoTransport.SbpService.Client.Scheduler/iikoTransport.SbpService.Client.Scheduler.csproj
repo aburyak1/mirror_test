@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Company>iiko</Company>
+    <Copyright>Copyright © iiko</Copyright>
+    <Description>Клиентская библиотека, предоставляемая SbpService для других сервисов iikoTransport.</Description>
+    <PackageTags>iiko-transport sbp service client transport</PackageTags>
+    <Version>8.4.1.1-trn1886v01</Version>
+    <FileVersion>$(Version)</FileVersion>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);1591;7035;0618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="iikoTransport.ServiceClient" Version="8.1.4.1" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,99 @@
+stages:
+  - test
+  - build containers
+  - tag commit
+
+variables:
+  SERVICE_NAME: SbpService
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST_AUTH_METHOD: trust
+  AppSettings__ConnectionString: "Server=postgres;database=gitlab-test;user id=postgres;password=postgres"
+
+services:
+  - postgres:12.2-alpine
+  
+# ==========================================================================
+# Tests
+# ==========================================================================
+
+test_and_build:
+  image: ${CI_REGISTRY}/devops/tools/sdk:5.0
+  stage: test
+  script:
+    - cd dev
+    - dotnet test -v n --test-adapter-path:. --logger:"junit;LogFilePath=test-result.xml"
+    - dotnet publish -c Release -o ./Build iikoTransport.${SERVICE_NAME}
+  cache:
+    key: $CI_PROJECT_NAME-$CI_JOB_NAME
+    paths:
+    - .nuget/
+  artifacts:
+    expire_in: 7d
+    when: always
+    paths:
+      - dev/Build
+    reports:
+      junit: dev/Tests/test-result.xml
+  tags:
+  - shared
+  except:
+  - tags
+  - api
+  - triggers
+
+
+# ==========================================================================
+# Containers
+# ==========================================================================
+
+build:
+  image:
+    name: gcr.io/kaniko-project/executor:debug-v0.16.0
+    entrypoint: ["/busybox/sh", "-c"]
+  stage: build containers
+  before_script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+  script:
+    - mkdir $CI_PROJECT_DIR/artifacts
+    - mv $CI_PROJECT_DIR/dev/Build $CI_PROJECT_DIR/artifacts/build
+    - |
+       cat > Dockerfile.build <<EOF
+       FROM ${CI_REGISTRY}/devops/tools/aspnet:5.0
+       CMD ["dotnet", "iikoTransport.${SERVICE_NAME}.dll"]
+       WORKDIR /app
+       ADD artifacts/build .
+       EOF
+    - /kaniko/executor --context  $CI_PROJECT_DIR --dockerfile  $CI_PROJECT_DIR/Dockerfile.build --destination ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
+    - echo ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
+  dependencies:
+  - test_and_build
+  tags:
+  - shared
+  except:
+  - tags
+  - api
+  - triggers
+
+# ==========================================================================
+# Tag
+# ==========================================================================
+
+tag commit:
+  image: alpine
+  stage: tag commit
+  variables:
+  before_script:
+    - apk add --update curl
+  script:
+    - TAG_NAME=${IIKO_VERSION_RELEASE}.${CI_PIPELINE_ID}
+    - echo "Tag ${TAG_NAME}"
+    - echo "ID ${CI_PROJECT_ID}"
+    - echo "Commit ${CI_COMMIT_SHA}"
+    - curl -X POST --silent --show-error --fail "https://gitlab.iiko.ru/api/v4/projects/${CI_PROJECT_ID}/repository/tags?tag_name=${TAG_NAME}&ref=${CI_COMMIT_SHA}&private_token=${GITLAB_API_TOKEN}" || true
+  dependencies: []
+  tags:
+  - shared
+  only:
+  - release

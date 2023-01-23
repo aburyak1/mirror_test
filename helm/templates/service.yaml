@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.serviceName }}
+  labels:
+    name: {{ .Values.serviceName }}
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    name: internal
+{{- if .Values.ingress.url }}
+  - protocol: TCP
+    port: 8080
+    name: external
+{{- end }}
+  selector:
+    name: {{ .Values.serviceName }}

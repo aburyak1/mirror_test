@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Company>iiko</Company>
+    <Copyright>Copyright © iiko</Copyright>
+    <Description>Библиотека для запуска REST сервиса по работе с api СБП.</Description>
+    <Version>1.0.0</Version>
+    <FileVersion>$(Version)</FileVersion>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);1591;7035;0618</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Storage\UpgradeScripts\Postgres\*.sql" />
+    <EmbeddedResource Include="Storage\UpgradeScripts\Postgres\*.sql" />
+    <None Update="Services\SbpNspk\myreq_2022.cer">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="iikoTransport.Common.Contracts" Version="8.3.1.1" />
+    <PackageReference Include="iikoTransport.Logging.Serilog" Version="8.1.4.1" />
+    <PackageReference Include="iikoTransport.Service" Version="8.2.3.1" />
+    <PackageReference Include="iikoTransport.ServiceClient" Version="8.1.4.1" />
+    <PackageReference Include="iikoTransport.Postgres" Version="8.2.5.1" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+    <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.Literate" Version="3.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+  </ItemGroup>
+</Project>
