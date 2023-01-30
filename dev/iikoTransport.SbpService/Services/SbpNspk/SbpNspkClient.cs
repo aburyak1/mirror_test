@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -60,9 +62,12 @@ namespace iikoTransport.SbpService.Services
                 handler.ServerCertificateCustomValidationCallback =
                     (httpRequestMessage, certificate, certChain, policyErrors) => { return true; };
                 var client = new HttpClient(handler);
-                var response = await client.PostAsync(
-                    "https://sbp-gate4.nspk.ru/payment/v1/b2b/payment-link/one-time-use",
-                    new StringContent(request.ToJson(), Encoding.UTF8, "application/json"));
+                var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://sbp-gate4.nspk.ru/payment/v1/b2b/payment-link/one-time-use");
+                requestMessage.Content = JsonContent.Create(request);
+                requestMessage.Headers.Add("Accept", "application/json");
+                requestMessage.Headers.Add("Accept-Charset", "UTF-8");
+                requestMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json; charset=UTF-8");
+                var response = await client.SendAsync(requestMessage);
                 var result = await response.Content.ReadAsStringAsync();
                 return result;
             }
