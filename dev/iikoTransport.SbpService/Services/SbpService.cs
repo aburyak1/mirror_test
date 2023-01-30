@@ -16,7 +16,7 @@ namespace iikoTransport.SbpService.Services
         private readonly ILog log;
         private readonly SbpNspkClient nspkClient;
 
-        private readonly string agentId = string.Empty;
+        private readonly string agentId = "A00000000280";
 
         public SbpService(ISbpSettingsStorage sbpStorage, SbpNspkClient nspkClient, ILog log)
         {

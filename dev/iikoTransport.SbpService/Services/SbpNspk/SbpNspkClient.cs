@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading.Tasks;
 using iikoTransport.Logging;
 using iikoTransport.Logging.Metrics;
@@ -53,7 +54,7 @@ namespace iikoTransport.SbpService.Services
                 var handler = new HttpClientHandler();
                 handler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 handler.SslProtocols = SslProtocols.Tls12;
-                var cert = new X509Certificate2("Services\\SbpNspk\\myreq_2022.cer");
+                var cert = new X509Certificate2("Services\\SbpNspk\\myreq_2022_out.pfx", "11");
                 handler.ClientCertificates.Add(cert);
                 handler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 handler.ServerCertificateCustomValidationCallback =
@@ -61,7 +62,7 @@ namespace iikoTransport.SbpService.Services
                 var client = new HttpClient(handler);
                 var response = await client.PostAsync(
                     "https://sbp-gate4.nspk.ru/payment/v1/b2b/payment-link/one-time-use",
-                    new StringContent(request.ToJson()));
+                    new StringContent(request.ToJson(), Encoding.UTF8, "application/json"));
                 var result = await response.Content.ReadAsStringAsync();
                 return result;
             }
