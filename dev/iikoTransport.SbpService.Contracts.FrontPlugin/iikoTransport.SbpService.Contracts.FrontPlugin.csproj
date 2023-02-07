@@ -13,4 +13,6 @@
     <NoWarn>$(NoWarn);1591;7035;0618</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
 </Project>
