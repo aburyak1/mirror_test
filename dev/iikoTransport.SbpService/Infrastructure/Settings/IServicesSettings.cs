@@ -7,7 +7,6 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
     /// </summary>
     public interface IServicesSettings
     {
-
         /// <summary>
         /// IikoWeb api address.
         /// </summary>
@@ -46,11 +45,16 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
         /// <summary>
         /// Uri для обращения к api СБП.
         /// </summary>
-        string SbpNspkUriFormat { get; set; }
+        string SbpNspkUriFormat { get; }
 
         /// <summary>
         /// Таймаут для запросов к api СБП.
         /// </summary>
-        TimeSpan SbpNspkTimeout { get; set; }
+        TimeSpan SbpNspkTimeout { get; }
+        
+        /// <summary>
+        /// Идентификатор Агента ТСП.
+        /// </summary>
+        string SbpNspkAgentId { get; }
     }
 }

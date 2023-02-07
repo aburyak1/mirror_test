@@ -12,6 +12,7 @@ using iikoTransport.SbpService.IikoWebIntegration;
 using iikoTransport.SbpService.Infrastructure.Settings;
 using iikoTransport.SbpService.Services;
 using iikoTransport.SbpService.Services.Interfaces;
+using iikoTransport.SbpService.Services.SbpNspk;
 using iikoTransport.SbpService.Storage;
 using iikoTransport.SbpService.Storage.Contracts;
 using iikoTransport.Service;
@@ -51,7 +52,7 @@ namespace iikoTransport.SbpService.Infrastructure.DI
             services.AddSingleton(provider =>
             {
                 var servicesSettings = provider.GetRequiredService<IServicesSettings>();
-                return new SbpNspkClientOptions(servicesSettings.SbpNspkUriFormat, servicesSettings.SbpNspkTimeout);
+                return new SbpNspkClientOptions(servicesSettings.SbpNspkUriFormat, servicesSettings.SbpNspkTimeout, servicesSettings.SbpNspkAgentId);
             });
 
             var appSettings = configuration.GetSection(nameof(AppSettings)).Get<AppSettings>();
@@ -67,9 +68,10 @@ namespace iikoTransport.SbpService.Infrastructure.DI
             });
             services.AddSingleton<ISbpSettingsStorage, SbpSettingsStorage>();
             
-            services.AddSingleton<ISbpService, Services.SbpService>();
+            services.AddScoped<ISbpService, Services.SbpService>();
             services.AddScoped<ISchedulerSbpService, SchedulerSbpService>();
             services.AddScoped<IIikoWebSyncManager, IikoWebSyncManager>();
+            services.AddScoped<IFrontPluginsSbpService, FrontPluginsSbpService>();
 
             services.AddSingleton<IMethodCallSettingsFactory>(provider =>
             {

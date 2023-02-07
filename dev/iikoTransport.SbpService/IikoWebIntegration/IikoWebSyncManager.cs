@@ -65,22 +65,22 @@ namespace iikoTransport.SbpService.IikoWebIntegration
                 log.Debug($"Last sync info is: {lastSyncInfo}");
 
                 log.Debug($"Getting SBP changes from iikoWeb by revision {lastSyncInfo.Revision}...");
-                var (isEmpty, ecsChanges) = await GetSbpChanges(callContext, lastSyncInfo);
-                if (isEmpty || ecsChanges?.NspkSettings == null)
+                var (isEmpty, sbpChanges) = await GetSbpChanges(callContext, lastSyncInfo);
+                if (isEmpty || sbpChanges?.NspkSettings == null)
                 {
                     await LogSuccessSync(lastSyncInfo, lastSyncInfo.Revision);
                     return;
                 }
 
                 log.Debug("Start saving.");
-                await sbpStorage.Upsert(ecsChanges.NspkSettings.Convert());
+                await sbpStorage.Upsert(sbpChanges.NspkSettings.Convert());
                 log.Debug("Saving completed.");
 
-                await LogSuccessSync(lastSyncInfo, ecsChanges.Revision);
+                await LogSuccessSync(lastSyncInfo, sbpChanges.Revision);
             }
             catch (Exception e)
             {
-                log.Error($"SyncEcsSettings completed with error: {e.Message}", e);
+                log.Error($"SyncSbpSettings completed with error: {e.Message}", e);
                 await LogErrorSync(callContext, lastSyncInfo);
                 throw;
             }
@@ -93,7 +93,7 @@ namespace iikoTransport.SbpService.IikoWebIntegration
             log.Info("Saving sync info to db completed.");
         }
 
-        private async Task<(bool IsEmpty, SbpSettingsChanges? EcsChanges)> GetSbpChanges(CallContext callContext, SyncInfo lastSyncInfo)
+        private async Task<(bool IsEmpty, SbpSettingsChanges? SbpChanges)> GetSbpChanges(CallContext callContext, SyncInfo lastSyncInfo)
         {
             var iikoWebCallSettings = callSettingsFactory.CreateWithTimeout(callContext.CorrelationId, servicesSettings.IikoWebCallTimeout);
             var iikoWebRequest = new GetSbpSettingsChangesRequest(lastSyncInfo.Revision);

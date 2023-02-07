@@ -1,21 +1,20 @@
 ﻿using System.Runtime.Serialization;
 
-namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
+namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Данные регистрируемой одноразовой Фукциональной ссылки СБП для B2B.
+    /// Данные регистрируемой многоразовой Фукциональной ссылки СБП для B2B.
     /// </summary>
     [DataContract]
-    public class CreateAndGetOneTimePaymentLinkPayloadForB2BRequest
+    public class CreateReusablePaymentLinkRequest
     {
-        public CreateAndGetOneTimePaymentLinkPayloadForB2BRequest(string agentId, string memberId, string account,
-            string merchantId, string amount, string paymentPurpose, bool takeTax)
+        public CreateReusablePaymentLinkRequest(string agentId, string memberId, string account, string merchantId,
+            string paymentPurpose, bool takeTax)
         {
             AgentId = agentId;
             MemberId = memberId;
             Account = account;
             MerchantId = merchantId;
-            Amount = amount;
             PaymentPurpose = paymentPurpose;
             TakeTax = takeTax;
         }
@@ -43,12 +42,6 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
         /// </summary>
         [DataMember(IsRequired = true, Name = "merchantId")]
         public string MerchantId { get; }
-
-        /// <summary>
-        /// Сумма Операции СБП C2B в копейках. Целое, положительное число. Валюта Операции СБП - рубли РФ.
-        /// </summary>
-        [DataMember(IsRequired = true, Name = "amount")]
-        public string Amount { get; }
 
         /// <summary>
         /// Назначение платежа

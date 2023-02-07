@@ -34,19 +34,19 @@ namespace iikoTransport.SbpService.IikoWebIntegration.Contracts
         /// <summary>
         /// Merchant Id in the SBP system.
         /// </summary>
-        [DataMember(Name = "merchantId", IsRequired = true)]
+        [DataMember(IsRequired = true)]
         public string MerchantId { get; }
 
         /// <summary>
         /// Bank account.
         /// </summary>
-        [DataMember(Name = "account", IsRequired = true)]
+        [DataMember(IsRequired = true)]
         public string Account { get; }
 
         /// <summary>
         /// Bank Id.
         /// </summary>
-        [DataMember(Name = "memberId", IsRequired = true)]
+        [DataMember(IsRequired = true)]
         public string MemberId { get; }
 
         /// <summary>

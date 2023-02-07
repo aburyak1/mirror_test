@@ -4,7 +4,6 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using iikoTransport.Logging;
 using iikoTransport.Logging.Metrics;
@@ -12,16 +11,26 @@ using iikoTransport.SbpService.Services.SbpNspk.Contracts;
 using iikoTransport.ServiceClient;
 using iikoTransport.Utils;
 
-namespace iikoTransport.SbpService.Services
+namespace iikoTransport.SbpService.Services.SbpNspk
 {
     /// <summary>
     /// Клиент для вызова методов api СБП.
     /// </summary>
     public class SbpNspkClient : BaseServiceClient
     {
+        public readonly string AgentId;
         private readonly SbpNspkClientOptions options;
         private readonly IMetrics metrics;
-        private const string createAndGetOneTimePaymentLinkPayloadForB2B = "/payment/v1/b2b/payment-link/one-time-use";
+        private const string CreateAndGetOneTimePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/one-time-use";
+        private const string CreateAndGetReusablePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/reusable";
+        private const string GetQrcPayloadPath = "/payment/v1/qrc-data/{0}/payload";
+        private const string CreateQrcIdReservationV1Path = "/payment/v1/qrc-id-reservation";
+        private const string CreateCashRegisterQrPath = "/payment/v1/cash-register-qrc";
+        private const string CreateParamsPath = "/payment/v1/cash-register-qrc/{0}/params";
+        private const string DeleteParamsPath = "/payment/v1/cash-register-qrc/{0}/params";
+        private const string CreatePaymentPetitionPath = "/payment/v1/agent/refund/{0}";
+        private const string RefundRequestStatusV2Path = "/payment/v2/agent/refund/{0}/{1}";
+        private const string GetStatusQrcOperationsPath = "/payment/v2/qrc-status";
 
         public SbpNspkClient(
             HttpClient httpClient,
@@ -34,6 +43,7 @@ namespace iikoTransport.SbpService.Services
             httpClient.Timeout = TimeSpan.FromMilliseconds(int.MaxValue);
             this.options = options ?? throw new ArgumentNullException(nameof(options));
             this.metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
+            this.AgentId = options.AgentId ?? throw new ArgumentNullException(nameof(options.AgentId));
         }
 
         protected override string ControllerName
@@ -45,81 +55,201 @@ namespace iikoTransport.SbpService.Services
         protected override bool IsExternalClient => true;
 
         /// <summary>
-        /// Тестовый метод для проверки работоспособности api СБП.
-        /// </summary>
-        public async Task<string> TestMethod(CreateAndGetOneTimePaymentLinkPayloadForB2BRequest request)
-        {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-
-            try
-            {
-                var handler = new HttpClientHandler();
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                handler.SslProtocols = SslProtocols.Tls12;
-                var cert = new X509Certificate2("Services\\SbpNspk\\myreq_2022_out.pfx", "11");
-                handler.ClientCertificates.Add(cert);
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                handler.ServerCertificateCustomValidationCallback =
-                    (httpRequestMessage, certificate, certChain, policyErrors) => { return true; };
-                var client = new HttpClient(handler);
-                var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://sbp-gate4.nspk.ru/payment/v1/b2b/payment-link/one-time-use");
-                requestMessage.Content = JsonContent.Create(request);
-                requestMessage.Headers.Add("Accept", "application/json");
-                requestMessage.Headers.Add("Accept-Charset", "UTF-8");
-                requestMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json; charset=UTF-8");
-                var response = await client.SendAsync(requestMessage);
-                var result = await response.Content.ReadAsStringAsync();
-                return result;
-            }
-            catch (Exception exc)
-            {
-                Log.Error("Error in TestMethod", exc);
-                throw;
-            }
-        }
-
-        /// <summary>
         /// Регистрация одноразовой Функциональной ссылки СБП для B2B.
         /// </summary>
-        public async Task<string> СreateAndGetOneTimePaymentLinkPayloadForB2B(Guid correlationId,
-            CreateAndGetOneTimePaymentLinkPayloadForB2BRequest request)
+        public async Task<SbpNspkResponse<QrcPayloadResponse>> CreateAndGetOneTimePaymentLinkPayloadForB2B(Guid correlationId,
+            CreateAndGetOneTimePaymentLinkPayloadForB2BRequest request, X509Certificate2? cert = null)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            return await CallSpbNspkMethod<string>(correlationId, createAndGetOneTimePaymentLinkPayloadForB2B, request);
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId,
+                CreateAndGetOneTimePaymentLinkPayloadForB2BPath, request, null, cert);
         }
 
         /// <summary>
-        /// Вызывать метод api ВКС Яндекс и вернуть десериализованный результат.
+        /// Регистрация многоразовой Функциональной ссылки СБП для B2B.
+        /// </summary>
+        public async Task<SbpNspkResponse<QrcPayloadResponse>> CreateAndGetReusablePaymentLinkPayloadForB2B(Guid correlationId,
+            CreateAndGetReusablePaymentLinkPayloadForB2BRequest request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId,
+                CreateAndGetReusablePaymentLinkPayloadForB2BPath, request);
+        }
+
+        /// <summary>
+        /// Запрос содержимого для ранее зарегистрированной Функциональной ссылки СБП.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="qrcId">Идентификатор зарегистрированной Функциональной ссылки СБП</param>
+        /// <param name="cert"></param>
+        public async Task<SbpNspkResponse<QrcPayloadResponse>> GetQRCPayload(Guid correlationId, string qrcId, X509Certificate2? cert = null)
+        {
+            if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
+
+            var uriDetails = string.Format(GetQrcPayloadPath, qrcId);
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, null, null, cert);
+        }
+
+        /// <summary>
+        /// Получение идентификаторов для многоразовых ссылок СБП.
+        /// </summary>
+        public async Task<SbpNspkResponse<CreateQrcIdReservationV1Response>> CreateQrcIdReservationV1(Guid correlationId,
+            CreateQrcIdReservationV1Request request, X509Certificate2? cert = null)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            return await CallSpbNspkMethod<SbpNspkResponse<CreateQrcIdReservationV1Response>>(correlationId,
+                CreateQrcIdReservationV1Path, request, null, cert);
+        }
+
+        /// <summary>
+        /// Регистрация Кассовой ссылки СБП.
+        /// </summary>
+        public async Task<SbpNspkResponse<QrcPayloadResponse>> СreateCashRegisterQr(Guid correlationId,
+            CreateCashRegisterQrRequest request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId,
+                CreateCashRegisterQrPath, request);
+        }
+
+        /// <summary>
+        /// Активация Кассовой ссылки СБП.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="qrcId">Идентификатор зарегистрированной Кассовой ссылки СБП</param>
+        /// <param name="request">Запрос на активацию Кассовой ссылки СБП для выполнения платежа</param>
+        public async Task<SbpNspkResponse<CreateParamsResponse>> CreateParams(Guid correlationId, string qrcId,
+            CreateParamsRequest request)
+        {
+            if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            var uriDetails = string.Format(CreateParamsPath, qrcId);
+            return await CallSpbNspkMethod<SbpNspkResponse<CreateParamsResponse>>(correlationId, uriDetails, request);
+        }
+
+        /// <summary>
+        /// Деактивация Кассовой ссылки СБП.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="qrcId">Идентификатор зарегистрированной Кассовой ссылки СБП</param>
+        public async Task<SbpNspkResponse<object>> DeleteParams(Guid correlationId, string qrcId)
+        {
+            if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
+
+            var uriDetails = string.Format(DeleteParamsPath, qrcId);
+            return await CallSpbNspkMethod<SbpNspkResponse<object>>(correlationId, uriDetails, null, HttpMethod.Delete);
+        }
+
+        /// <summary>
+        /// Запрос статуса Операций СБП по идентификатору QR Dynamic (v2)
+        /// </summary>
+        public async Task<SbpNspkResponse<GetStatusQRCOperationsResponse[]>> GetStatusQRCOperations(Guid correlationId,
+            GetStatusQRCOperationsRequest request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            var uriDetails = string.Format(GetStatusQrcOperationsPath);
+            return await CallSpbNspkMethod<SbpNspkResponse<GetStatusQRCOperationsResponse[]>>(correlationId, uriDetails, request, HttpMethod.Put);
+        }
+
+        /// <summary>
+        /// Запрос Агента ТСП на возврат по Операции СБП C2B.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="trxId">Идентификатор исходной Операции СБП C2B. Example: "A12930013057370100000546241820D7"</param>
+        /// <param name="request">Запрос Агента ТСП на возврат по Операции СБП C2B</param>
+        public async Task<SbpNspkResponse<CreatePaymentPetitionResponse>> CreatePaymentPetition(Guid correlationId, string trxId,
+            CreatePaymentPetitionRequest request)
+        {
+            if (trxId == null) throw new ArgumentNullException(nameof(trxId));
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            var uriDetails = string.Format(CreatePaymentPetitionPath, trxId);
+            return await CallSpbNspkMethod<SbpNspkResponse<CreatePaymentPetitionResponse>>(correlationId, uriDetails, request);
+        }
+
+        /// <summary>
+        /// Статус запроса на возврат средств для Агента ТСП (v2).
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="originalTrxId">Идентификатор исходной Операции СБП C2B. Example: "A12930013057370100000546241820D7"</param>
+        /// <param name="opkcRefundRequestId">Уникальный идентификатор запроса на возврат, назначенный ОПКЦ СБП. Example: "AR10000GH635GB249P6PDNCJ6F7STTM5"</param>
+        public async Task<SbpNspkResponse<RefundRequestStatusV2Response>> RefundRequestStatusV2(Guid correlationId, string originalTrxId,
+            string opkcRefundRequestId)
+        {
+            if (originalTrxId == null) throw new ArgumentNullException(nameof(originalTrxId));
+            if (opkcRefundRequestId == null) throw new ArgumentNullException(nameof(opkcRefundRequestId));
+
+            var uriDetails = string.Format(RefundRequestStatusV2Path, originalTrxId, opkcRefundRequestId);
+            return await CallSpbNspkMethod<SbpNspkResponse<RefundRequestStatusV2Response>>(correlationId, uriDetails, null);
+        }
+
+        /// <summary>
+        /// Вызывать метод api sbp.nspk и вернуть десериализованный результат.
         /// </summary>
         /// <param name="correlationId">Correlation Id.</param>
         /// <param name="uriDetails">Метод.</param>
         /// <param name="body">Body для post-запроса.</param>
-        private async Task<T> CallSpbNspkMethod<T>(Guid correlationId, string uriDetails, object body)
+        /// <param name="httpMethod"></param>
+        /// <param name="cert">Специфиеский сертификат для тестов</param>
+        private async Task<T> CallSpbNspkMethod<T>(Guid correlationId, string uriDetails, object? body, HttpMethod? httpMethod = null, X509Certificate2? cert = null)
         {
             if (string.IsNullOrWhiteSpace(uriDetails)) throw new ArgumentNullException(nameof(uriDetails));
-            if (body == null) throw new ArgumentNullException(nameof(body));
-
-            var callSettings = CallSettingsFactory.CreateWithTimeout(correlationId, options.Timeout);
-            // Пример добавления хедеров, искать в документации апи по слову mediaType
-            //callSettings.Headers.Add("mediaType", mediaTypePng);  
+            if (httpMethod == null) httpMethod = body == null ? HttpMethod.Get : HttpMethod.Post;
 
             var uri = BaseUri.Trim().TrimEnd('/') + uriDetails;
             bool success = false;
             try
             {
-                var result = await ExecuteMethodByFullUriAsync<T>(uri, body, callSettings, HttpMethod.Post);
+                HttpClientHandler handler;
+                if (cert != null)   // Для тестовых методов скармливаем хендлеру тестовый сертификат. 
+                {
+                    handler = new HttpClientHandler
+                    {
+                        ClientCertificateOptions = ClientCertificateOption.Manual,
+                        SslProtocols = SslProtocols.Tls12,
+                        ServerCertificateCustomValidationCallback =
+                            (httpRequestMessage, certificate, certChain, policyErrors) => { return true; },
+                        ClientCertificates = { cert }
+                    };
+                }
+                else
+                {
+                    handler = new HttpClientHandler
+                    {
+                        SslProtocols = SslProtocols.Tls12
+                    };
+                }
+                var client = new HttpClient(handler) { Timeout = options.Timeout };
+                var requestMessage = new HttpRequestMessage(httpMethod, uri);
+                if (httpMethod != HttpMethod.Get && body != null)
+                {
+                    requestMessage.Content = JsonContent.Create(body);
+                    requestMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json; charset=UTF-8");
+                }
+                requestMessage.Headers.Add("TrnCorrelationId", correlationId.ToString());
+                requestMessage.Headers.Add("Accept", "application/json");
+                requestMessage.Headers.Add("Accept-Charset", "UTF-8");
+                
+                var response = await client.SendAsync(requestMessage);
+                var responseString = await response.Content.ReadAsStringAsync();
+                var result = responseString.FromJson<T>();
                 success = true;
                 return result;
             }
             catch (Exception exc)
             {
-                Log.Error("Sbp.nspk api call error", exc);
+                Log.Error("Sbp.Nspk api call error", exc);
                 throw;
             }
             finally
             {
-                metrics.Count("sbp.nspk_call",
+                metrics.Count("sbpNspk_call",
                     new MetricLabel(MetricLabels.Method, TrimQueryParams(uriDetails)),
                     new MetricLabel(MetricLabels.Success, success));
             }

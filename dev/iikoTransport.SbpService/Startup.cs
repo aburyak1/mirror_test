@@ -23,6 +23,7 @@ namespace iikoTransport.SbpService
             services.AddCustomBindings(Configuration);
             services.UseJobLocksPostgres();
             services.UseSynchronizationPostgres();
+            services.AddDistributedMemoryCache();
             base.ConfigureServices(services);
         }
 

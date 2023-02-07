@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0; netstandard2.1</TargetFrameworks>
+    <Company>iiko</Company>
+    <Copyright>Copyright © iiko</Copyright>
+    <Description>Библиотека контрактов, предоставляемых сервисом SbpService для фронтовых плагинов.</Description>
+    <PackageTags>iiko-transport sbp service contracts frontplugin nuget-source-common</PackageTags>
+    <Version>8.4.2.1-trn1886v01</Version>
+    <FileVersion>$(Version)</FileVersion>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);1591;7035;0618</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>

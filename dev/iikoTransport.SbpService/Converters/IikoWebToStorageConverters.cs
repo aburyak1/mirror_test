@@ -16,7 +16,7 @@ namespace iikoTransport.SbpService.Converters
         
         public static DB.SbpSetting Convert(this WEB.NspkInfo source)
         {
-            return new DB.SbpSetting(source.Id, source.TerminalGroupUocId, source.MerchantId, source.Account, source.MemberId); //, source.Deleted);
+            return new DB.SbpSetting(source.Id, source.TerminalGroupUocId, source.MerchantId, source.Account, source.MemberId);
         }
     }
 }

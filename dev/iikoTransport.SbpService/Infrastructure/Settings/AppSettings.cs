@@ -8,7 +8,6 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
     /// </summary>
     public class AppSettings : IDbSettings, IServicesSettings
     {
-
         public string IikoWebServiceAddress { get; set; } = null!;
 
         public string? IikoWebProxyAddress { get; set; }
@@ -29,5 +28,7 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
         public string SbpNspkUriFormat { get; set; } = null!;
         
         public TimeSpan SbpNspkTimeout { get; set; }
+        
+        public string SbpNspkAgentId { get; set; } = null!;
     }
 }

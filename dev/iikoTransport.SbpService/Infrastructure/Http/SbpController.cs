@@ -23,10 +23,40 @@ namespace iikoTransport.SbpService.Infrastructure.Http
         /// Тестовый метод для проверки работоспособности.
         /// </summary>
         [HttpGet]
-        [Route("test")]
-        public async Task<string> TestRun()
+        [Route("test0/{pas}")]
+        public async Task TestRun0(string pas)
         {
-            return await sbpService.TestRun();
+            await sbpService.SetPassword(pas);
+        }
+        
+        /// <summary>
+        /// Тестовый метод для проверки работоспособности.
+        /// </summary>
+        [HttpGet]
+        [Route("test1")]
+        public async Task<string> TestRun1()
+        {
+            return await sbpService.TestRun1();
+        }
+        
+        /// <summary>
+        /// Тестовый метод для проверки работоспособности.
+        /// </summary>
+        [HttpGet]
+        [Route("test2")]
+        public async Task<string> TestRun2(Guid? tgId)
+        {
+            return await sbpService.TestRun2(tgId);
+        }
+        
+        /// <summary>
+        /// Тестовый метод для проверки работоспособности.
+        /// </summary>
+        [HttpGet]
+        [Route("test3")]
+        public async Task<string> TestRun3(string? qrcId)
+        {
+            return await sbpService.TestRun3(qrcId);
         }
     }
 }
