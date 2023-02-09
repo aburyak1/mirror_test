@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.serviceName }}
+spec:
+  serviceName: {{ .Values.serviceName }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      name: {{ .Values.serviceName }}
+  template:
+    metadata:
+      name: {{ .Values.serviceName }}
+      labels:
+        name: {{ .Values.serviceName }}
+        filebeat: log
+    spec:
+      updateStrategy:
+        type: RollingUpdate
+      volumes:
+      {{- if .Values.packetbeat }}
+      - name: packet-data
+        emptyDir: {}
+      - name: packetbeat-config
+        configMap:
+          defaultMode: 0600
+          name: packetbeat-conf
+      {{- end }}
+      - name: appsettings
+        configMap:
+          name: {{ .Values.serviceName }}-config
+      containers:
+        - name: {{ .Values.serviceName }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+            {{- if and .Values.ingress.url (ne .Values.serviceName "publicapi") }}
+            - name: public
+              containerPort: 8080
+            {{ end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          env:
+          {{- range $key, $value := .Values.env.data }}
+            - name: {{ $key }}
+              value: {{ $value  }}
+          {{- end}}
+            - name: RELEASE_SOLT
+              value: {{ randAlphaNum 10 | b64enc | quote }}
+          volumeMounts:
+          - name: appsettings
+            mountPath: /app/appsettings.{{ .Values.env.data.IIKOTRANSPORT_ENVIRONMENT }}.json
+            subPath: appsettings.{{ .Values.env.data.IIKOTRANSPORT_ENVIRONMENT }}.json
+        {{- if .Values.packetbeat }}
+        - name: packetbeat-{{ .Values.serviceName }}
+          image: docker.elastic.co/beats/packetbeat:6.3.2
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: 150Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          volumeMounts:
+          - name: packetbeat-config
+            mountPath: /config
+          - name: packet-data
+            mountPath: /usr/share/packetbeat/data
+          args: ["-e", "-c", "/config/packetbeat.yml"]
+          securityContext:
+            runAsUser: 0
+            capabilities:
+              add:
+              - NET_ADMIN
+        {{- end }}
+
+      imagePullSecrets:
+        - name: registrykey

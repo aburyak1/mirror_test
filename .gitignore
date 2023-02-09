@@ -1,0 +1,49 @@
+dev/IikoNetWebInterface/IikoNetWebInterface/logs/
+dev/IikoNetWebInterface/IikoNetWebInterface/Content/Images/Barcodes/*.gif
+build/
+!ThirdParty/Net/**/build
+dev/logs/
+dev/CardService/UpgradeLog*.htm
+.idea/
+
+# visual studio
+bin/
+obj/
+.vs/
+TestResults/
+Debug/
+Release/
+*.suo
+*.user
+*.vsmdi
+*.ncb
+*.sln.cache
+
+#nuget
+/nugetPackages
+
+# resharper
+_resharper.*/
+
+# delphi
+*.exe
+*.dcu
+
+# third parties
+!ThirdParty/Net/NAnt/bin/
+!dev/Integrations/RKeeper/FarcardsPlugin/lib/Resto.iikoNet.Farcards.dll
+
+*.dotCover
+
+# Резервная копия настроек Git Extensions (автоматически создаётся при изменении настроек)
+GitExtensions.settings.backup
+
+#Ресурсные файлы с переводами
+dev/**/*.??-??.resx
+#Исключения
+!dev/**/*Localization.??-??.resx
+!dev/**/*ExternalLinks.??-??.resx
+#Логи резгена и создаваемый им новый csv файл
+Resources/Translation/resources_new.csv
+BuildScripts/resgen/*.log
+/dev/iikoTransport/UpgradeLog.htm
