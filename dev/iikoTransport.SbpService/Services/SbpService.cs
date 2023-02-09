@@ -17,7 +17,7 @@ namespace iikoTransport.SbpService.Services
         private readonly ISbpSettingsStorage settingsStorage;
         private readonly SbpNspkClient nspkClient;
 
-        public SbpService(ISbpSettingsStorage sbpStorage, SbpNspkClient nspkClient, IDistributedCache distributedCache)
+        public SbpService(ISbpSettingsStorage sbpStorage, SbpNspkClient nspkClient)
         {
             this.settingsStorage = sbpStorage ?? throw new ArgumentNullException(nameof(sbpStorage));
             this.nspkClient = nspkClient ?? throw new ArgumentNullException(nameof(nspkClient));
