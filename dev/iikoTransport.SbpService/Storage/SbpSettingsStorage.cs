@@ -18,14 +18,10 @@ namespace iikoTransport.SbpService.Storage
 
         public async Task<SbpSetting> Get(Guid terminalGroupUocId, CancellationToken cancellationToken = default)
         {
-            #region Query
-
             var query =
                 $"select {SbpSetting.AllFieldsWithAliases} " +
                 $"from {SbpSetting.TableName} " +
                 $"where {SbpSetting.TerminalGroupUocIdCol} = @{nameof(terminalGroupUocId)} ";
-
-            #endregion
 
             using (var conn = await dbContextFactory.CreateAndOpenAsync())
             {

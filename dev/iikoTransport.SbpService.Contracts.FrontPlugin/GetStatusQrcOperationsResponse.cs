@@ -3,7 +3,7 @@
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Ответ на запрос статуса Операций СБП по идентификаторам QR
+    /// Get status of QR-code operations response.
     /// </summary>
     [DataContract]
     public class GetStatusQrcOperationsResponse: SbpNspkBaseResponse<GetStatusQrcOperationsData[]>

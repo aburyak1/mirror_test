@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
 {
@@ -10,13 +11,13 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
     {
         public CreateParamsRequest(string amount)
         {
-            Amount = amount;
+            Amount = amount ?? throw new ArgumentNullException(nameof(amount));
         }
 
         /// <summary>
         /// Сумма Операции СБП C2B в копейках. Целое, положительное число.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "amount")]
+        [DataMember(IsRequired = true)]
         public string Amount { get; }
     }
 }

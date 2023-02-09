@@ -12,66 +12,68 @@ namespace iikoTransport.SbpService.Converters
     {
         public static Front.PaymentLinkPayloadResponse Convert(this Sbp.SbpNspkResponse<Sbp.QrcPayloadResponse> source)
         {
-            return new Front.PaymentLinkPayloadResponse(source.Code,source.Message,source.Data?.Convert());
+            return new Front.PaymentLinkPayloadResponse(source.Code, source.Message, source.Data?.Convert());
         }
-        
-        public static Sbp.CreateAndGetOneTimePaymentLinkPayloadForB2BRequest Convert(this Front.CreateOneTimePaymentLinkRequest source, SbpSetting settings, string agentId)
+
+        public static Sbp.CreateAndGetOneTimePaymentLinkPayloadForB2BRequest Convert(
+            this Front.CreateOneTimePaymentLinkRequest source, SbpSetting settings, string agentId)
         {
             return new Sbp.CreateAndGetOneTimePaymentLinkPayloadForB2BRequest(
-                agentId, 
-                settings.MemberId, 
-                settings.Account, 
+                agentId,
+                settings.MemberId,
+                settings.Account,
                 settings.MerchantId,
-                source.Amount.ToString(), 
-                source.PaymentPurpose, 
+                source.Amount.ToString(),
+                source.PaymentPurpose,
                 source.TakeTax);
         }
-        
-        public static Sbp.CreateAndGetReusablePaymentLinkPayloadForB2BRequest Convert(this Front.CreateReusablePaymentLinkRequest source, SbpSetting settings, string agentId)
+
+        public static Sbp.CreateAndGetReusablePaymentLinkPayloadForB2BRequest Convert(
+            this Front.CreateReusablePaymentLinkRequest source, SbpSetting settings, string agentId)
         {
             return new Sbp.CreateAndGetReusablePaymentLinkPayloadForB2BRequest(
-                agentId, 
-                settings.MemberId, 
-                settings.Account, 
+                agentId,
+                settings.MemberId,
+                settings.Account,
                 settings.MerchantId,
-                source.PaymentPurpose, 
+                source.PaymentPurpose,
                 source.TakeTax);
         }
-        
+
         public static Front.CreateQrcIdReservationResponse Convert(this Sbp.SbpNspkResponse<Sbp.CreateQrcIdReservationV1Response> source)
         {
             return new Front.CreateQrcIdReservationResponse(source.Code, source.Message, source.Data?.Convert());
         }
-        
+
         public static Sbp.CreateCashRegisterQrRequest Convert(this Front.CreateCashRegisterQrRequest source, SbpSetting settings, string agentId)
         {
             return new Sbp.CreateCashRegisterQrRequest(
-                agentId, 
-                settings.MemberId, 
-                settings.Account, 
+                agentId,
+                settings.MemberId,
+                settings.Account,
                 settings.MerchantId,
                 source.QrcId);
         }
-        
+
         public static Front.ActivateCashRegisterQrResponse Convert(this Sbp.SbpNspkResponse<Sbp.CreateParamsResponse> source)
         {
-            return new Front.ActivateCashRegisterQrResponse(source.Code,source.Message,source.Data?.Convert());
+            return new Front.ActivateCashRegisterQrResponse(source.Code, source.Message, source.Data?.Convert());
         }
 
         public static Front.GetStatusQrcOperationsResponse Convert(this Sbp.SbpNspkResponse<Sbp.GetStatusQRCOperationsResponse[]> source)
         {
             return new Front.GetStatusQrcOperationsResponse(source.Code, source.Message, source.Data?.Select(data => data.Convert()).ToArray());
         }
-        
+
         public static Sbp.CreatePaymentPetitionRequest Convert(this Front.CreatePaymentPetitionRequest source, SbpSetting settings)
         {
             return new Sbp.CreatePaymentPetitionRequest(
-                settings.MemberId, 
-                settings.MerchantId, 
-                source.OriginalQrcId, 
-                source.Amount, 
+                settings.MemberId,
+                settings.MerchantId,
+                source.OriginalQrcId,
+                source.Amount,
                 source.Currency,
-                source.Kzo, 
+                source.Kzo,
                 source.AgentRefundRequestId);
         }
 
@@ -119,10 +121,10 @@ namespace iikoTransport.SbpService.Converters
         private static Front.ActivateCashRegisterQrData Convert(this Sbp.CreateParamsResponse source)
         {
             return new Front.ActivateCashRegisterQrData(
-                source.ParamsId, 
-                source.QrcId, 
+                source.ParamsId,
+                source.QrcId,
                 source.Amount,
-                source.Currency, 
+                source.Currency,
                 source.PaymentPurpose,
                 source.FraudScore);
         }

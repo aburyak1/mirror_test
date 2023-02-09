@@ -1,22 +1,23 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Запрос на создание Кассовой ссылки СБП, поддерживающей логику работы с Корзинами клиента.
+    /// Create cash register QR request.
     /// </summary>
     [DataContract]
     public class CreateCashRegisterQrRequest
     {
         public CreateCashRegisterQrRequest(string qrcId)
         {
-            QrcId = qrcId;
+            QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
         }
 
         /// <summary>
         /// Идентификатор многоразовой Платежной ссылки, предварительно полученный в запросе "Получение идентификаторов для многоразовых ссылок СБП".
         /// </summary>
-        [DataMember(IsRequired = false, Name = "qrcId")]
+        [DataMember(IsRequired = false)]
         public string QrcId { get; }
     }
 }

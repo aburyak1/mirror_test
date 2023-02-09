@@ -121,9 +121,9 @@ namespace iikoTransport.SbpService.Services
         public async Task<GetRefundStatusResponse> GetRefundStatus(Call<GetRefundStatusRequest> call)
         {
             if (call == null) throw new ArgumentNullException(nameof(call));
-            
-            var response = 
-                await sbpClient.RefundRequestStatusV2(call.Context.CorrelationId, call.Payload.OriginalTrxId, call.Payload.OpkcRefundRequestId);
+
+            var response = await sbpClient.RefundRequestStatusV2(call.Context.CorrelationId, call.Payload.OriginalTrxId,
+                call.Payload.OpkcRefundRequestId);
             return response.Convert();
         }
 

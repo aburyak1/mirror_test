@@ -3,7 +3,7 @@
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Ответ на получение массива идентификаторов многоразовых ссылок СБП для последующей регистрации ссылки с заданным идентификатором.
+    /// Create payment petition response.
     /// </summary>
     [DataContract]
     public class CreatePaymentPetitionResponse: SbpNspkBaseResponse<CreatePaymentPetitionData>

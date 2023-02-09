@@ -1,22 +1,23 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Данные ранее зарегистрированной Функциональной ссылки СБП.
+    /// Get QR-code payload for existing payment link request.
     /// </summary>
     [DataContract]
     public class GetQrcPayloadRequest
     {
         public GetQrcPayloadRequest(string qrcId)
         {
-            QrcId = qrcId;
+            QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
         }
 
         /// <summary>
         /// Идентификатор зарегистрированной Функциональной ссылки СБП. 
         /// </summary>
-        [DataMember(IsRequired = true, Name = "qrcId")]
+        [DataMember(IsRequired = true)]
         public string QrcId { get; }
     }
 }

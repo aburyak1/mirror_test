@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Authentication;
 using iikoTransport.EmployeesService.IikoWebIntegration;
 using iikoTransport.Logging;
 using iikoTransport.Logging.Events;
@@ -94,7 +95,19 @@ namespace iikoTransport.SbpService.Infrastructure.DI
                         Proxy = new WebProxy(appSettings.IikoWebProxyAddress, false, null, proxyCredentials)
                     };
                 });
-            services.AddHttpClient<SbpNspkClient>();
+
+            services.AddSingleton<ISbpClientCertBuilder, SbpClientCertBuilder>();
+            services.AddHttpClient<SbpNspkClient>().ConfigurePrimaryHttpMessageHandler(sp =>
+            {
+                var certBuilder = sp.GetRequiredService<ISbpClientCertBuilder>();
+                var cert = certBuilder.Build();
+                return new HttpClientHandler
+                {
+                    ClientCertificateOptions = ClientCertificateOption.Manual,
+                    SslProtocols = SslProtocols.Tls12,
+                    ClientCertificates = { cert }
+                };
+            });
 
             services.AddDocumentation(new[]
             {

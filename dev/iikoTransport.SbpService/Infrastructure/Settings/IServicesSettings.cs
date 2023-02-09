@@ -56,5 +56,15 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
         /// Идентификатор Агента ТСП.
         /// </summary>
         string SbpNspkAgentId { get; }
+        
+        /// <summary>
+        /// Путь к файлу сертификата Агента ТСП.
+        /// </summary>
+        string SbpNspkCertPath { get; }
+        
+        /// <summary>
+        /// Пароль доступа к данным сертификата Агента ТСП.
+        /// </summary>
+        string SbpNspkCertPass { get; }
     }
 }

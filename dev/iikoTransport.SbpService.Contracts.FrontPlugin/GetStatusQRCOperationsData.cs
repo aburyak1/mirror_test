@@ -1,36 +1,40 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
+    /// <summary>
+    /// Get status of QR-code operations response data.
+    /// </summary>
     [DataContract]
     public class GetStatusQrcOperationsData
     {
         public GetStatusQrcOperationsData(string qrcId, string code, string message, string? status, string? trxId, string? kzo)
         {
-            QrcId = qrcId;
-            Code = code;
-            Message = message;
+            QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
+            Code = code ?? throw new ArgumentNullException(nameof(code));
+            Message = message ?? throw new ArgumentNullException(nameof(message));
             Status = status;
             TrxId = trxId;
             Kzo = kzo;
         }
 
         /// <summary>
-        /// Идентификатор Платежной ссылки СБП, запрос по которой направлялся
+        /// Идентификатор Платежной ссылки СБП, запрос по которой направлялся.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "qrcId")]
+        [DataMember(IsRequired = true)]
         public string QrcId { get; }
 
         /// <summary>
-        /// Код ответа на запрос статусов Операций СБП C2B
+        /// Код ответа на запрос статусов Операций СБП C2B.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "code")]
+        [DataMember(IsRequired = true)]
         public string Code { get; }
 
         /// <summary>
-        /// Описание кода ответа на запрос
+        /// Описание кода ответа на запрос.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "message")]
+        [DataMember(IsRequired = true)]
         public string Message { get; }
 
         /// <summary>
@@ -38,15 +42,15 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin
         /// ACWP - ACCEPTED, Операция завершена успешно;
         /// RCVD - RECEIVED, Операция в обработке;
         /// RJCT - REJECTED, Операция отклонена;
-        /// NTST - NOT_STARTED, Операция по Платежной ссылке СБП не найдена;
+        /// NTST - NOT_STARTED, Операция по Платежной ссылке СБП не найдена.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "status")]
+        [DataMember(IsRequired = false)]
         public string? Status { get; }
 
         /// <summary>
         /// Идентификатор Операции СБП. 
         /// </summary>
-        [DataMember(IsRequired = false, Name = "trxId")]
+        [DataMember(IsRequired = false)]
         public string? TrxId { get; }
 
         /// <summary>
@@ -54,7 +58,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin
         /// алгоритмов. Присутствует при условии, что Операция СБП C2B по запрашиваемому qrcId
         /// завершена успешно (параметр "status" ="ACWP").
         /// </summary>
-        [DataMember(IsRequired = false, Name = "kzo")]
+        [DataMember(IsRequired = false)]
         public string? Kzo { get; }
     }
 }

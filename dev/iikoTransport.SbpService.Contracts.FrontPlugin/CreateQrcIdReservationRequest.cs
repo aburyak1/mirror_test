@@ -3,7 +3,7 @@
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Запрос на получение массива идентификаторов многоразовых ссылок СБП для последующей регистрации ссылки с заданным идентификатором.
+    /// Reservate QR-code IDs for reusable payment links request.
     /// </summary>
     [DataContract]
     public class CreateQrcIdReservationRequest
@@ -14,9 +14,9 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin
         }
 
         /// <summary>
-        /// Количество идентификаторов для генерации
+        /// Количество идентификаторов для генерации.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "quantity")]
+        [DataMember(IsRequired = true)]
         public int Quantity { get; }
     }
 }

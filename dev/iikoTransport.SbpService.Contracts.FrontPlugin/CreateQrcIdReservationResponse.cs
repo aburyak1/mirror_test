@@ -3,7 +3,7 @@
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Ответ на запрос Агента ТСП на возврат по Операции СБП C2B.
+    /// Reservate QR-code IDs for reusable payment links response.
     /// </summary>
     [DataContract]
     public class CreateQrcIdReservationResponse: SbpNspkBaseResponse<CreateQrcIdReservationData>

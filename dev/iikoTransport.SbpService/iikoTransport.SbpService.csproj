@@ -21,7 +21,7 @@
   <ItemGroup>
     <None Remove="Storage\UpgradeScripts\Postgres\*.sql" />
     <EmbeddedResource Include="Storage\UpgradeScripts\Postgres\*.sql" />
-    <None Update="Services\SbpNspk\myreq_2022.cer">
+    <None Update="myreq_2022.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -3,7 +3,7 @@
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Ответ на активацию Кассовой ссылки СБП для выполнения платежа.
+    /// Activate cash register QR response.
     /// </summary>
     [DataContract]
     public class ActivateCashRegisterQrResponse: SbpNspkBaseResponse<ActivateCashRegisterQrData>

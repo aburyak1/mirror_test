@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
 {
@@ -10,13 +11,13 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
     {
         public CreateQrcIdReservationV1Response(string[] qrcIds)
         {
-            QrcIds = qrcIds;
+            QrcIds = qrcIds ?? throw new ArgumentNullException(nameof(qrcIds));
         }
 
         /// <summary>
-        /// Массив сгенерированных идентификаторов Платежной ссылки СБП
+        /// Массив сгенерированных идентификаторов Платежной ссылки СБП.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "qrcIds")]
+        [DataMember(IsRequired = true)]
         public string[] QrcIds { get; }
     }
 }

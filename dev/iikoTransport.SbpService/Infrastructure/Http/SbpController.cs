@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using iikoTransport.SbpService.Services.Interfaces;
-using iikoTransport.Service;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace iikoTransport.SbpService.Infrastructure.Http
 {
@@ -17,16 +15,6 @@ namespace iikoTransport.SbpService.Infrastructure.Http
         public SbpController(ISbpService sbpService)
         {
             this.sbpService = sbpService ?? throw new ArgumentNullException(nameof(sbpService));
-        }
-
-        /// <summary>
-        /// Тестовый метод для проверки работоспособности.
-        /// </summary>
-        [HttpGet]
-        [Route("test0/{pas}")]
-        public async Task TestRun0(string pas)
-        {
-            await sbpService.SetPassword(pas);
         }
         
         /// <summary>

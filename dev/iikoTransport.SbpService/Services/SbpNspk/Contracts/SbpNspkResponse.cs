@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
 {
@@ -10,27 +11,27 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
     {
         public SbpNspkResponse(string code, string message, T? data)
         {
-            Code = code;
-            Message = message;
+            Code = code ?? throw new ArgumentNullException(nameof(code));
+            Message = message ?? throw new ArgumentNullException(nameof(message));
             Data = data;
         }
 
         /// <summary>
-        /// Код ответа
+        /// Код ответа.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "code")]
+        [DataMember(IsRequired = true)]
         public string Code { get; }
 
         /// <summary>
-        /// Описание кода ответа
+        /// Описание кода ответа.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "message")]
+        [DataMember(IsRequired = true)]
         public string Message { get; }
 
         /// <summary>
-        /// object
+        /// Data object. 
         /// </summary>
-        [DataMember(IsRequired = false, Name = "data")]
+        [DataMember(IsRequired = false)]
         public T? Data { get; }
     }
 }

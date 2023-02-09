@@ -14,9 +14,9 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
         }
 
         /// <summary>
-        /// Количество идентификаторов для генерации
+        /// Количество идентификаторов для генерации.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "quantity")]
+        [DataMember(IsRequired = true)]
         public int Quantity { get; }
     }
 }

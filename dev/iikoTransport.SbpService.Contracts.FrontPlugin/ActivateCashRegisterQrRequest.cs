@@ -1,29 +1,30 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Запрос на активацию Кассовой ссылки СБП для выполнения платежа.
+    /// Activate cash register QR request.
     /// </summary>
     [DataContract]
     public class ActivateCashRegisterQrRequest
     {
         public ActivateCashRegisterQrRequest(string qrcId, string amount)
         {
-            QrcId = qrcId;
-            Amount = amount;
+            QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
+            Amount = amount ?? throw new ArgumentNullException(nameof(amount));
         }
 
         /// <summary>
         /// Идентификатор зарегистрированной Кассовой ссылки СБП.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "qrcId")]
+        [DataMember(IsRequired = true)]
         public string QrcId { get; }
 
         /// <summary>
         /// Сумма Операции СБП C2B в копейках. Целое, положительное число.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "amount")]
+        [DataMember(IsRequired = true)]
         public string Amount { get; }
     }
 }

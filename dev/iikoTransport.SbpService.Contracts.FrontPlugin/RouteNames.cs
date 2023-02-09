@@ -6,52 +6,52 @@
     public class RouteNames
     {
         /// <summary>
-        /// Регистрация одноразовой Функциональной ссылки СБП для B2B.
+        /// Create one-time payment link method route.
         /// </summary>
         public const string CreateOneTimePaymentLink = "PluginsSbp/CreateOneTimePaymentLink";
 
         /// <summary>
-        /// Регистрация многоразовой Функциональной ссылки СБП для B2B.
+        /// Create reusable payment link method route.
         /// </summary>
         public const string CreateReusablePaymentLink = "PluginsSbp/CreateReusablePaymentLink";
 
         /// <summary>
-        /// Запрос содержимого для ранее зарегистрированной Функциональной ссылки СБП.
+        /// Get QR-code payload for existing payment link method route.
         /// </summary>
         public const string GetQrcPayload = "PluginsSbp/GetQrcPayload";
 
         /// <summary>
-        /// Получение идентификаторов для многоразовых ссылок СБП.
+        /// Reservate QR-code IDs for reusable payment links method route.
         /// </summary>
         public const string CreateQrcIdReservation = "PluginsSbp/CreateQrcIdReservation";
 
         /// <summary>
-        /// Регистрация Кассовой ссылки СБП.
+        /// Create cash register QR method route.
         /// </summary>
         public const string СreateCashRegisterQr = "PluginsSbp/СreateCashRegisterQr";
 
         /// <summary>
-        /// Активация Кассовой ссылки СБП.
+        /// Activate cash register QR method route.
         /// </summary>
         public const string ActivateCashRegisterQr = "PluginsSbp/ActivateCashRegisterQr";
 
         /// <summary>
-        /// Деактивация Кассовой ссылки СБП.
+        /// Deactivate cash register QR method route.
         /// </summary>
         public const string DeactivateCashRegisterQr = "PluginsSbp/DeactivateCashRegisterQr";
 
         /// <summary>
-        /// Запрос статуса Операций СБП по идентификаторам QR. 
+        /// Get status of QR-code operations method route. 
         /// </summary>
         public const string GetStatusQrcOperations = "PluginsSbp/GetStatusQrcOperations";
 
         /// <summary>
-        /// Запрос Агента ТСП на возврат по Операции СБП C2B.
+        /// Create payment petition method route. 
         /// </summary>
         public const string CreatePaymentPetition = "PluginsSbp/CreatePaymentPetition";
 
         /// <summary>
-        /// Статус запроса на возврат средств для Агента ТСП.
+        /// Get refund status method route. 
         /// </summary>
         public const string GetRefundStatus = "PluginsSbp/GetRefundStatus";
     }

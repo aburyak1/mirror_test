@@ -11,9 +11,9 @@ namespace iikoTransport.SbpService.Storage.Contracts.Entities
         {
             Id = id;
             TerminalGroupUocId = terminalGroupUocId;
-            MerchantId = merchantId;
-            Account = account;
-            MemberId = memberId;
+            MerchantId = merchantId ?? throw new ArgumentNullException(nameof(merchantId));
+            Account = account ?? throw new ArgumentNullException(nameof(account));
+            MemberId = memberId ?? throw new ArgumentNullException(nameof(memberId));
         }
 
         /// <summary>

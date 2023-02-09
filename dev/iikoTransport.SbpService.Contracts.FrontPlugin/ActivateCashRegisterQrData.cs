@@ -1,57 +1,58 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Данные ответа на активацию Кассовой ссылки СБП для выполнения платежа.
+    /// Activate cash register QR response data.
     /// </summary>
     [DataContract]
     public class ActivateCashRegisterQrData
     {
         public ActivateCashRegisterQrData(string paramsId, string qrcId, string amount, string currency, string paymentPurpose, string fraudScore)
         {
-            ParamsId = paramsId;
-            QrcId = qrcId;
-            Amount = amount;
-            Currency = currency;
-            PaymentPurpose = paymentPurpose;
-            FraudScore = fraudScore;
+            ParamsId = paramsId ?? throw new ArgumentNullException(nameof(paramsId));
+            QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
+            Amount = amount ?? throw new ArgumentNullException(nameof(amount));
+            Currency = currency ?? throw new ArgumentNullException(nameof(currency));
+            PaymentPurpose = paymentPurpose ?? throw new ArgumentNullException(nameof(paymentPurpose));
+            FraudScore = fraudScore ?? throw new ArgumentNullException(nameof(fraudScore));
         }
 
         /// <summary>
-        /// Идентификатор активных значений параметров Кассовой ссылки СБП
+        /// Идентификатор активных значений параметров Кассовой ссылки СБП.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "paramsId")]
+        [DataMember(IsRequired = true)]
         public string ParamsId { get; }
 
         /// <summary>
-        /// Идентификатор зарегистрированной Кассовой ссылки СБП
+        /// Идентификатор зарегистрированной Кассовой ссылки СБП.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "qrcId")]
+        [DataMember(IsRequired = true)]
         public string QrcId { get; }
 
         /// <summary>
         /// Сумма Операции СБП C2B в копейках. Целое, положительное число.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "amount")]
+        [DataMember(IsRequired = true)]
         public string Amount { get; }
 
         /// <summary>
-        /// Валюта операции
+        /// Валюта операции.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "currency")]
+        [DataMember(IsRequired = false)]
         public string Currency { get; }
 
         /// <summary>
-        /// Назначение платежа
+        /// Назначение платежа.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "paymentPurpose")]
+        [DataMember(IsRequired = false)]
         public string PaymentPurpose { get; }
 
         /// <summary>
-        /// Индикатор Подозрительной Операции Агента ТСП
+        /// Индикатор Подозрительной Операции Агента ТСП.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "fraudScore")]
+        [DataMember(IsRequired = false)]
         public string FraudScore { get; }
     }
 }

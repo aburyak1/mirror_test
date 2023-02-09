@@ -5,8 +5,6 @@ namespace iikoTransport.SbpService.Services.Interfaces
 {
     public interface ISbpService
     {
-        Task SetPassword(string password);
-
         /// <summary>
         /// Тестовый запрос к СБП.
         /// </summary>

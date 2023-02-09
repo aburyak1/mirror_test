@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.IikoWebIntegration.Contracts
 {
@@ -10,7 +11,7 @@ namespace iikoTransport.SbpService.IikoWebIntegration.Contracts
     {
         public GetSbpSettingsChangesResponse(SbpSettingsChanges data)
         {
-            Data = data;
+            Data = data ?? throw new ArgumentNullException(nameof(data));;
         }
 
         /// <summary>

@@ -3,7 +3,7 @@
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Ответ на деактивацию Кассовой ссылки СБП для выполнения платежа.
+    /// Get refund status response.
     /// </summary>
     [DataContract]
     public class GetRefundStatusResponse: SbpNspkBaseResponse<GetRefundStatusData>

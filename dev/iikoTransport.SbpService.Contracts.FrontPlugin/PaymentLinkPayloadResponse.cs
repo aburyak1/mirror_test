@@ -3,7 +3,7 @@
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Ответ запроса регистрации Фукциональной ссылки СБП для B2B.
+    /// Payment link payload.
     /// </summary>
     [DataContract]
     public class PaymentLinkPayloadResponse: SbpNspkBaseResponse<QrcPayload>

@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
 {
@@ -10,24 +11,24 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
     {
         public Image(string mediaType, string content)
         {
-            MediaType = mediaType;
-            Content = content;
+            MediaType = mediaType ?? throw new ArgumentNullException(nameof(mediaType));
+            Content = content ?? throw new ArgumentNullException(nameof(content));
         }
 
         /// <summary>
-        /// Формат получаемого файла:
+        /// Формат получаемого файла.
         /// </summary>
         /// <remarks>
         /// image/png - png; 
         /// image/svg+xml - xml of svg
         /// </remarks>
-        [DataMember(IsRequired = true, Name = "mediaType")]
+        [DataMember(IsRequired = true)]
         public string MediaType { get; }
 
         /// <summary>
-        /// base64encoded image. Формат для декодирования зависит от mediaType
+        /// base64encoded image. Формат для декодирования зависит от mediaType.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "content")]
+        [DataMember(IsRequired = true)]
         public string Content { get; }
     }
 }

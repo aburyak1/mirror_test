@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
 {
@@ -11,41 +12,41 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
         public CreateCashRegisterQrRequest(string agentId, string memberId, string merchantId,
             string account, string qrcId)
         {
-            AgentId = agentId;
-            MemberId = memberId;
-            MerchantId = merchantId;
-            Account = account;
-            QrcId = qrcId;
+            AgentId = agentId ?? throw new ArgumentNullException(nameof(agentId));
+            MemberId = memberId ?? throw new ArgumentNullException(nameof(memberId));
+            MerchantId = merchantId ?? throw new ArgumentNullException(nameof(merchantId));
+            Account = account ?? throw new ArgumentNullException(nameof(account));
+            QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
         }
 
         /// <summary>
-        /// Идентификатор Агента ТСП
+        /// Идентификатор Агента ТСП.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "agentId")]
+        [DataMember(IsRequired = true)]
         public string AgentId { get; }
 
         /// <summary>
-        /// Идентификатор Банка Получателя
+        /// Идентификатор Банка Получателя.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "memberId")]
+        [DataMember(IsRequired = true)]
         public string MemberId { get; }
 
         /// <summary>
-        /// Идентификатор зарегистрированного ТСП в СБП
+        /// Идентификатор зарегистрированного ТСП в СБП.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "merchantId")]
+        [DataMember(IsRequired = true)]
         public string MerchantId { get; }
 
         /// <summary>
-        /// Банковский счет ЮЛ, ИП или самозанятого
+        /// Банковский счет ЮЛ, ИП или самозанятого.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "account")]
+        [DataMember(IsRequired = true)]
         public string Account { get; }
 
         /// <summary>
         /// Идентификатор многоразовой Платежной ссылки, предварительно полученный в запросе "Получение идентификаторов для многоразовых ссылок СБП".
         /// </summary>
-        [DataMember(IsRequired = false, Name = "qrcId")]
+        [DataMember(IsRequired = false)]
         public string QrcId { get; }
     }
 }

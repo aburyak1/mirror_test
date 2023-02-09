@@ -1,22 +1,23 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Contracts.FrontPlugin
 {
     /// <summary>
-    /// Данные ответа на получение массива идентификаторов многоразовых ссылок СБП для последующей регистрации ссылки с заданным идентификатором.
+    /// Reservate QR-code IDs for reusable payment links response data.
     /// </summary>
     [DataContract]
     public class CreateQrcIdReservationData
     {
         public CreateQrcIdReservationData(string[] qrcIds)
         {
-            QrcIds = qrcIds;
+            QrcIds = qrcIds ?? throw new ArgumentNullException(nameof(qrcIds));
         }
 
         /// <summary>
-        /// Массив сгенерированных идентификаторов Платежной ссылки СБП
+        /// Массив сгенерированных идентификаторов Платежной ссылки СБП.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "qrcIds")]
+        [DataMember(IsRequired = true)]
         public string[] QrcIds { get; }
     }
 }

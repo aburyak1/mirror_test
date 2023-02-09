@@ -45,7 +45,7 @@ namespace iikoTransport.SbpService.Services.Interfaces
         Task<DeactivateCashRegisterQrResponse> DeactivateCashRegisterQr(Call<DeactivateCashRegisterQrRequest> call);
 
         /// <summary>
-        /// Запрос статуса Операций СБП по идентификаторам QR
+        /// Запрос статуса Операций СБП по идентификаторам QR.
         /// </summary>
         Task<GetStatusQrcOperationsResponse> GetStatusQrcOperations(Call<GetStatusQRCOperationsRequest> call);
 

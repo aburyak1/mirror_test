@@ -2,13 +2,11 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using iikoTransport.Logging;
 using iikoTransport.Logging.Metrics;
 using iikoTransport.SbpService.Services.SbpNspk.Contracts;
-using iikoTransport.ServiceClient;
 using iikoTransport.Utils;
 
 namespace iikoTransport.SbpService.Services.SbpNspk
@@ -16,11 +14,13 @@ namespace iikoTransport.SbpService.Services.SbpNspk
     /// <summary>
     /// Клиент для вызова методов api СБП.
     /// </summary>
-    public class SbpNspkClient : BaseServiceClient
+    public class SbpNspkClient
     {
         public readonly string AgentId;
-        private readonly SbpNspkClientOptions options;
         private readonly IMetrics metrics;
+        private readonly HttpClient client;
+        private readonly ILog log;
+        private readonly string baseUri;
         private const string CreateAndGetOneTimePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/one-time-use";
         private const string CreateAndGetReusablePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/reusable";
         private const string GetQrcPayloadPath = "/payment/v1/qrc-data/{0}/payload";
@@ -35,24 +35,23 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         public SbpNspkClient(
             HttpClient httpClient,
             SbpNspkClientOptions options,
-            IMethodCallSettingsFactory callSettingsFactory,
             ILog log,
             IMetrics metrics)
-            : base(httpClient, options, callSettingsFactory, log)
         {
-            httpClient.Timeout = TimeSpan.FromMilliseconds(int.MaxValue);
-            this.options = options ?? throw new ArgumentNullException(nameof(options));
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+            httpClient.Timeout = options.Timeout;
+            this.AgentId = options.AgentId;
             this.metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
-            this.AgentId = options.AgentId ?? throw new ArgumentNullException(nameof(options.AgentId));
-        }
 
-        protected override string ControllerName
-        {
-            get => throw new InvalidOperationException();
-            set => throw new InvalidOperationException();
+            // Можно было бы использовать наш BaseServiceClient.ExecuteMethodByFullUriAsync,
+            // но тот при коде ответа сервиса отличном от 200 падает в ошибку при EnsureSuccessStatusCode.
+            // СБП в ряде случаев возвращает ответ 400 с документированными контрактами,
+            // в которых описана ошибка - в текущей реализации она десериализуется и возвращается во фронт.  
+            this.client = httpClient;
+            this.baseUri = options.BaseUri;
+            this.log = log ?? throw new ArgumentNullException(nameof(log));
         }
-
-        protected override bool IsExternalClient => true;
 
         /// <summary>
         /// Регистрация одноразовой Функциональной ссылки СБП для B2B.
@@ -62,8 +61,8 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId,
-                CreateAndGetOneTimePaymentLinkPayloadForB2BPath, request, null, cert);
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(
+                correlationId, CreateAndGetOneTimePaymentLinkPayloadForB2BPath, request);
         }
 
         /// <summary>
@@ -83,13 +82,12 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         /// </summary>
         /// <param name="correlationId"></param>
         /// <param name="qrcId">Идентификатор зарегистрированной Функциональной ссылки СБП</param>
-        /// <param name="cert"></param>
-        public async Task<SbpNspkResponse<QrcPayloadResponse>> GetQRCPayload(Guid correlationId, string qrcId, X509Certificate2? cert = null)
+        public async Task<SbpNspkResponse<QrcPayloadResponse>> GetQRCPayload(Guid correlationId, string qrcId)
         {
             if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
 
             var uriDetails = string.Format(GetQrcPayloadPath, qrcId);
-            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, null, null, cert);
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, null);
         }
 
         /// <summary>
@@ -100,8 +98,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            return await CallSpbNspkMethod<SbpNspkResponse<CreateQrcIdReservationV1Response>>(correlationId,
-                CreateQrcIdReservationV1Path, request, null, cert);
+            return await CallSpbNspkMethod<SbpNspkResponse<CreateQrcIdReservationV1Response>>(correlationId, CreateQrcIdReservationV1Path, request);
         }
 
         /// <summary>
@@ -196,36 +193,15 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         /// <param name="uriDetails">Метод.</param>
         /// <param name="body">Body для post-запроса.</param>
         /// <param name="httpMethod"></param>
-        /// <param name="cert">Специфиеский сертификат для тестов</param>
-        private async Task<T> CallSpbNspkMethod<T>(Guid correlationId, string uriDetails, object? body, HttpMethod? httpMethod = null, X509Certificate2? cert = null)
+        private async Task<T> CallSpbNspkMethod<T>(Guid correlationId, string uriDetails, object? body, HttpMethod? httpMethod = null)
         {
             if (string.IsNullOrWhiteSpace(uriDetails)) throw new ArgumentNullException(nameof(uriDetails));
             if (httpMethod == null) httpMethod = body == null ? HttpMethod.Get : HttpMethod.Post;
 
-            var uri = BaseUri.Trim().TrimEnd('/') + uriDetails;
+            var uri = baseUri.Trim().TrimEnd('/') + uriDetails;
             bool success = false;
             try
             {
-                HttpClientHandler handler;
-                if (cert != null)   // Для тестовых методов скармливаем хендлеру тестовый сертификат. 
-                {
-                    handler = new HttpClientHandler
-                    {
-                        ClientCertificateOptions = ClientCertificateOption.Manual,
-                        SslProtocols = SslProtocols.Tls12,
-                        ServerCertificateCustomValidationCallback =
-                            (httpRequestMessage, certificate, certChain, policyErrors) => { return true; },
-                        ClientCertificates = { cert }
-                    };
-                }
-                else
-                {
-                    handler = new HttpClientHandler
-                    {
-                        SslProtocols = SslProtocols.Tls12
-                    };
-                }
-                var client = new HttpClient(handler) { Timeout = options.Timeout };
                 var requestMessage = new HttpRequestMessage(httpMethod, uri);
                 if (httpMethod != HttpMethod.Get && body != null)
                 {
@@ -244,7 +220,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
             }
             catch (Exception exc)
             {
-                Log.Error("Sbp.Nspk api call error", exc);
+                log.Error("Sbp.Nspk api call error", exc);
                 throw;
             }
             finally

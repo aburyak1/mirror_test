@@ -30,5 +30,9 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
         public TimeSpan SbpNspkTimeout { get; set; }
         
         public string SbpNspkAgentId { get; set; } = null!;
+        
+        public string SbpNspkCertPath { get; set; } = null!;
+        
+        public string SbpNspkCertPass { get; set; } = null!;
     }
 }

@@ -24,28 +24,28 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
         }
 
         /// <summary>
-        /// Идентификатор зарегистрированной Платежной ссылки СБП, по которому была выполнена исходная Операция СБП C2B
+        /// Идентификатор зарегистрированной Платежной ссылки СБП, по которому была выполнена исходная Операция СБП C2B.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "originalQrcId")]
+        [DataMember(IsRequired = false)]
         public string? OriginalQrcId { get; }
 
         /// <summary>
-        /// Идентификатор исходной Операции СБП C2B
+        /// Идентификатор исходной Операции СБП C2B.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "originalTrxId")]
+        [DataMember(IsRequired = false)]
         public string? OriginalTrxId { get; }
 
         /// <summary>
-        /// Код ответа, соответствующий решению Банка Плательщика по запросу на возврат
-        /// Enum:"RQ00030" "RQ00031" "RQ05039" "RQ05040" "RQ05041" "RQ05052" "RQ07999"
+        /// Код ответа, соответствующий решению Банка Плательщика по запросу на возврат. 
+        /// Enum: "RQ00030" "RQ00031" "RQ05039" "RQ05040" "RQ05041" "RQ05052" "RQ07999". 
         /// </summary>
-        [DataMember(IsRequired = false, Name = "refundStatusCode")]
+        [DataMember(IsRequired = false)]
         public string? RefundStatusCode { get; }
 
         /// <summary>
         /// Идентификатор Операции СБП B2C
         /// </summary>
-        [DataMember(IsRequired = false, Name = "trxId")]
+        [DataMember(IsRequired = false)]
         public string? TrxId { get; }
 
         /// <summary>
@@ -53,39 +53,39 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
         /// "NTST" – NOT_STARTED, Операция не начата;
         /// "RCVD" – RECEIVED, Операция в обработке;
         /// "ACWP" – ACCEPTED, Операция завершена успешно;
-        /// "RJCT" – REJECTED, Операция отклонена;
+        /// "RJCT" – REJECTED, Операция отклонена.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "trxStatus")]
+        [DataMember(IsRequired = false)]
         public string? TrxStatus { get; }
 
         /// <summary>
-        /// Сумма Операции СБП в копейках. Целое, положительное число. Валюта операции – рубли РФ
+        /// Сумма Операции СБП в копейках. Целое, положительное число. Валюта операции – рубли РФ.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "amount")]
+        [DataMember(IsRequired = false)]
         public string? Amount { get; }
 
         /// <summary>
-        /// Дата и время выполнения Операции СБП B2C
+        /// Дата и время выполнения Операции СБП B2C.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "timestamp")]
+        [DataMember(IsRequired = false)]
         public string? Timestamp { get; }
 
         /// <summary>
-        /// Маскированный номер телефона Клиента-Получателя
+        /// Маскированный номер телефона Клиента-Получателя.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "payeeId")]
+        [DataMember(IsRequired = false)]
         public string? PayeeId { get; }
 
         /// <summary>
-        /// Уникальный идентификатор запроса, назначаемый ТСП или Агентом ТСП
+        /// Уникальный идентификатор запроса, назначаемый ТСП или Агентом ТСП.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "agentRefundRequestId")]
+        [DataMember(IsRequired = false)]
         public string? AgentRefundRequestId { get; }
 
         /// <summary>
-        /// Уникальный идентификатор запроса от ОПКЦ
+        /// Уникальный идентификатор запроса от ОПКЦ.
         /// </summary>
-        [DataMember(IsRequired = false, Name = "opkcRefundRequestId")]
+        [DataMember(IsRequired = false)]
         public string? OpkcRefundRequestId { get; }
     }
 }

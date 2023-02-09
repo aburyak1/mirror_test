@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
 {
@@ -10,13 +11,13 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts
     {
         public CreatePaymentPetitionResponse(string opkcRefundRequestId)
         {
-            OpkcRefundRequestId = opkcRefundRequestId;
+            OpkcRefundRequestId = opkcRefundRequestId ?? throw new ArgumentNullException(nameof(opkcRefundRequestId));
         }
 
         /// <summary>
-        /// Уникальный идентификатор запроса на возврат, назначенный ОПКЦ СБП
+        /// Уникальный идентификатор запроса на возврат, назначенный ОПКЦ СБП.
         /// </summary>
-        [DataMember(IsRequired = true, Name = "opkcRefundRequestId")]
+        [DataMember(IsRequired = true)]
         public string OpkcRefundRequestId { get; }
     }
 }
