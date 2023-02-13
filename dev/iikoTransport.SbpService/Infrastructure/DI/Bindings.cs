@@ -105,7 +105,8 @@ namespace iikoTransport.SbpService.Infrastructure.DI
                 {
                     ClientCertificateOptions = ClientCertificateOption.Manual,
                     SslProtocols = SslProtocols.Tls12,
-                    ClientCertificates = { cert }
+                    ClientCertificates = { cert },
+                    ServerCertificateCustomValidationCallback = (httpRequestMessage, certificate, certChain, policyErrors) => { return true; }
                 };
             });
 
