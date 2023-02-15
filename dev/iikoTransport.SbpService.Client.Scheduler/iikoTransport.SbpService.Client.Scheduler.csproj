@@ -5,7 +5,7 @@
     <Copyright>Copyright © iiko</Copyright>
     <Description>Клиентская библиотека, предоставляемая SbpService для других сервисов iikoTransport.</Description>
     <PackageTags>iiko-transport sbp service client transport</PackageTags>
-    <Version>8.4.1.1-trn1886v01</Version>
+    <Version>8.4.3.1</Version>
     <FileVersion>$(Version)</FileVersion>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
