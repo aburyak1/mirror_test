@@ -31,6 +31,7 @@
     <PackageReference Include="iikoTransport.Service" Version="8.2.3.1" />
     <PackageReference Include="iikoTransport.ServiceClient" Version="8.1.4.1" />
     <PackageReference Include="iikoTransport.Postgres" Version="8.2.5.1" />
+    <PackageReference Include="iikoTransport.TransportService.Client.Transport" Version="8.4.1.1" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
     <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />

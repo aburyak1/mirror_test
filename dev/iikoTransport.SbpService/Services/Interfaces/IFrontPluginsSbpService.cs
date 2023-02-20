@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using iikoTransport.SbpService.Contracts.FrontPlugin;
+using iikoTransport.SbpService.Contracts.FrontPlugin.FromFront;
 using iikoTransport.Service;
 
 namespace iikoTransport.SbpService.Services.Interfaces
@@ -52,7 +52,12 @@ namespace iikoTransport.SbpService.Services.Interfaces
         /// <summary>
         /// Запрос Агента ТСП на возврат по Операции СБП C2B.
         /// </summary>
-        Task<CreatePaymentPetitionResponse> CreatePaymentPetition(Call<CreatePaymentPetitionRequest> call);
+        Task<CreatedRefundResponse> CreateRefundRequest(Call<CreateRefundRequest> call);
+
+        /// <summary>
+        /// Получение идентификатора ОПКЦ СБП запроса на возврат.
+        /// </summary>
+        Task<CreatedRefundResponse> GetRefundIdRequest(Call<GetRefundIdRequest> call);
 
         /// <summary>
         /// Статус запроса на возврат средств для Агента ТСП (v2).

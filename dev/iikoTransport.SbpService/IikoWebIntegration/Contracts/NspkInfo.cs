@@ -9,14 +9,13 @@ namespace iikoTransport.SbpService.IikoWebIntegration.Contracts
     [DataContract]
     public class NspkInfo
     {
-        public NspkInfo(Guid id, Guid terminalGroupUocId, string merchantId, string account, string memberId, bool deleted)
+        public NspkInfo(Guid id, Guid terminalGroupUocId, string merchantId, string account, string memberId)
         {
             Id = id;
             TerminalGroupUocId = terminalGroupUocId;
             MerchantId = merchantId ?? throw new ArgumentNullException(nameof(merchantId));
             Account = account ?? throw new ArgumentNullException(nameof(account));
             MemberId = memberId ?? throw new ArgumentNullException(nameof(memberId));
-            Deleted = deleted;
         }
 
         /// <summary>
@@ -48,11 +47,5 @@ namespace iikoTransport.SbpService.IikoWebIntegration.Contracts
         /// </summary>
         [DataMember(IsRequired = true)]
         public string MemberId { get; }
-
-        /// <summary>
-        /// Deleted flag.
-        /// </summary>
-        [DataMember(IsRequired = false)]
-        public bool Deleted { get; }
     }
 }
