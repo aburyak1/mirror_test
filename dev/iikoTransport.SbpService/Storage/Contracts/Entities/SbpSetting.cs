@@ -46,9 +46,9 @@ namespace iikoTransport.SbpService.Storage.Contracts.Entities
         public const string TableName = "sbp_settings";
         public const string IdCol = "id";
         public const string TerminalGroupUocIdCol = "terminal_group_uoc_id";
-        public const string MerchantIdCol = "merchantId";
+        public const string MerchantIdCol = "merchant_id";
         public const string AccountCol = "account";
-        public const string MemberIdCol = "memberId";
+        public const string MemberIdCol = "member_id";
         
         public const string PrimaryKey = "sbp_settings_pkey";
 
