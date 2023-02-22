@@ -11,7 +11,7 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Public
     /// <summary>
     /// Уведомления для Агентов ТСП. 
     /// </summary>
-    [ServiceFilter(typeof(InternalApiFilter))]
+    [ServiceFilter(typeof(PublicApiFilter))]
     public class SbpController : ControllerBase
     {
         private readonly ISbpEventsService eventsService;
