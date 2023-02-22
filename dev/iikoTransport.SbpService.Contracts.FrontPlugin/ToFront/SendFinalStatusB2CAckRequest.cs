@@ -9,8 +9,8 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.ToFront
     [DataContract]
     public class SendFinalStatusB2CAckRequest
     {
-        public SendFinalStatusB2CAckRequest(string originalQrcId, string originalTrxId, string trxId, string status, int amount, string errorCode, string message,
-            string timestamp, string payeeId, string agentRefundRequestId, string opkcRefundRequestId)
+        public SendFinalStatusB2CAckRequest(string originalQrcId, string originalTrxId, string trxId, string status, int amount, string errorCode,
+            string message, string timestamp, string payeeId, string agentRefundRequestId, string opkcRefundRequestId)
         {
             OriginalQrcId = originalQrcId ?? throw new ArgumentNullException(nameof(originalQrcId));
             OriginalTrxId = originalTrxId ?? throw new ArgumentNullException(nameof(originalTrxId));

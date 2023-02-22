@@ -9,19 +9,19 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.ToFront
     [DataContract]
     public class SendFinalStatusAckRequest
     {
-        public SendFinalStatusAckRequest(string qrcId, string trxId, string paramsId, string status, int amount, string errorCode, string message,
-            string timestamp, string payerId, string kzo)
+        public SendFinalStatusAckRequest(string qrcId, string trxId, string? paramsId, string status, int amount, string? errorCode, string? message,
+            string timestamp, string payerId, string? kzo)
         {
             QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
             TrxId = trxId ?? throw new ArgumentNullException(nameof(trxId));
-            ParamsId = paramsId ?? throw new ArgumentNullException(nameof(paramsId));
+            ParamsId = paramsId;
             Status = status ?? throw new ArgumentNullException(nameof(status));
             Amount = amount;
-            ErrorCode = errorCode ?? throw new ArgumentNullException(nameof(errorCode));
-            Message = message ?? throw new ArgumentNullException(nameof(message));
+            ErrorCode = errorCode;
+            Message = message;
             Timestamp = timestamp ?? throw new ArgumentNullException(nameof(timestamp));
             PayerId = payerId ?? throw new ArgumentNullException(nameof(payerId));
-            Kzo = kzo ?? throw new ArgumentNullException(nameof(kzo));
+            Kzo = kzo;
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.ToFront
         /// Идентификатор активных значений параметров Платежной ссылки СБП. Передается, если оплата происходила по Кассовой ссылке СБП.
         /// </summary>
         [DataMember(IsRequired = false)]
-        public string ParamsId { get; }
+        public string? ParamsId { get; }
 
         /// <summary>
         /// Финальный статус Операции СБП C2B:
@@ -61,13 +61,13 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.ToFront
         /// Зарезервированное поле для будущего использования.
         /// </summary>
         [DataMember(IsRequired = false)]
-        public string ErrorCode { get; }
+        public string? ErrorCode { get; }
 
         /// <summary>
         /// Зарезервированное поле для будущего использования.
         /// </summary>
         [DataMember(IsRequired = false)]
-        public string Message { get; }
+        public string? Message { get; }
 
         /// <summary>
         /// Дата и время выполнения Операции СБП C2B.
@@ -87,6 +87,6 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.ToFront
         /// завершена успешно (параметр "status" ="ACWP").
         /// </summary>
         [DataMember(IsRequired = false)]
-        public string Kzo { get; }
+        public string? Kzo { get; }
     }
 }
