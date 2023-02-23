@@ -8,6 +8,10 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
     /// </summary>
     public class AppSettings : IDbSettings, IServicesSettings
     {
+        public string ConnectionString { get; set; } = null!;
+        
+        public string TransportServiceAddress { get; set; } = null!;
+        
         public string IikoWebServiceAddress { get; set; } = null!;
 
         public string? IikoWebProxyAddress { get; set; }
@@ -18,8 +22,6 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
         
         /// <inheritdoc />
         public TimeSpan IikoWebCallTimeout { get; set; }
-        
-        public string ConnectionString { get; set; } = null!;
         
         public TimeSpan DefaultCallTimeout { get; set; }
         

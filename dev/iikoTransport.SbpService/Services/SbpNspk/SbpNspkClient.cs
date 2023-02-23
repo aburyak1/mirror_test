@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using iikoTransport.Logging;
 using iikoTransport.Logging.Metrics;
 using iikoTransport.SbpService.Services.SbpNspk.Contracts;
+using iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperations;
 using iikoTransport.Utils;
 
 namespace iikoTransport.SbpService.Services.SbpNspk
@@ -28,7 +29,8 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         private const string CreateCashRegisterQrPath = "/payment/v1/cash-register-qrc";
         private const string CreateParamsPath = "/payment/v1/cash-register-qrc/{0}/params";
         private const string DeleteParamsPath = "/payment/v1/cash-register-qrc/{0}/params";
-        private const string CreatePaymentPetitionPath = "/payment/v1/agent/refund/{0}";
+        private const string CreateRefundRequestPath = "/payment/v1/agent/refund/{0}";
+        private const string GetRefundIdRequestPath = "/payment/v1/agent/refund/{0}?agentRefundRequestId={1}";
         private const string RefundRequestStatusV2Path = "/payment/v2/agent/refund/{0}/{1}";
         private const string GetStatusQrcOperationsPath = "/payment/v2/qrc-status";
 
@@ -158,16 +160,32 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         /// Запрос Агента ТСП на возврат по Операции СБП C2B.
         /// </summary>
         /// <param name="correlationId"></param>
-        /// <param name="trxId">Идентификатор исходной Операции СБП C2B. Example: "A12930013057370100000546241820D7"</param>
-        /// <param name="request">Запрос Агента ТСП на возврат по Операции СБП C2B</param>
-        public async Task<SbpNspkResponse<CreatePaymentPetitionResponse>> CreatePaymentPetition(Guid correlationId, string trxId,
-            CreatePaymentPetitionRequest request)
+        /// <param name="trxId">Идентификатор исходной Операции СБП C2B. Example: "A12930013057370100000546241820D7". </param>
+        /// <param name="request">Запрос Агента ТСП на возврат по Операции СБП C2B. </param>
+        public async Task<SbpNspkResponse<CreatedRefundResponse>> CreateRefundRequest(Guid correlationId, string trxId,
+            CreateRefundRequest request)
         {
             if (trxId == null) throw new ArgumentNullException(nameof(trxId));
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            var uriDetails = string.Format(CreatePaymentPetitionPath, trxId);
-            return await CallSpbNspkMethod<SbpNspkResponse<CreatePaymentPetitionResponse>>(correlationId, uriDetails, request);
+            var uriDetails = string.Format(CreateRefundRequestPath, trxId);
+            return await CallSpbNspkMethod<SbpNspkResponse<CreatedRefundResponse>>(correlationId, uriDetails, request);
+        }
+
+        /// <summary>
+        /// Получение идентификатора ОПКЦ СБП запроса на возврат.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="trxId">Идентификатор исходной Операции СБП C2B. Example: "A12930013057370100000546241820D7". </param>
+        /// <param name="agentRefundRequestId">Уникальный идентификатор запроса на возврат, назначенный Агентом ТСП.
+        /// Example: "3842ca282aea11e88feca860b60304d5". </param>
+        public async Task<SbpNspkResponse<CreatedRefundResponse>> GetRefundIdRequest(Guid correlationId, string trxId, string agentRefundRequestId)
+        {
+            if (trxId == null) throw new ArgumentNullException(nameof(trxId));
+            if (agentRefundRequestId == null) throw new ArgumentNullException(nameof(agentRefundRequestId));
+
+            var uriDetails = string.Format(GetRefundIdRequestPath, trxId, agentRefundRequestId);
+            return await CallSpbNspkMethod<SbpNspkResponse<CreatedRefundResponse>>(correlationId, uriDetails, null);
         }
 
         /// <summary>

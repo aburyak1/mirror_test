@@ -9,6 +9,7 @@ using iikoTransport.Logging.Events;
 using iikoTransport.Logging.Metrics;
 using iikoTransport.Logging.Serilog;
 using iikoTransport.Postgres;
+using iikoTransport.SbpService.FrontClient;
 using iikoTransport.SbpService.IikoWebIntegration;
 using iikoTransport.SbpService.Infrastructure.Settings;
 using iikoTransport.SbpService.Services;
@@ -68,11 +69,14 @@ namespace iikoTransport.SbpService.Infrastructure.DI
                 return new NpgsqlDbFactory(dbSettings.ConnectionString, logger, assembly);
             });
             services.AddSingleton<ISbpSettingsStorage, SbpSettingsStorage>();
+            services.AddSingleton<IPaymentLinksStorage, PaymentLinksStorage>();
+            services.AddSingleton<IRefundRequestsStorage, RefundRequestsStorage>();
             
-            services.AddScoped<ISbpService, Services.SbpService>();
+            services.AddScoped<ITestService, TestService>();
             services.AddScoped<ISchedulerSbpService, SchedulerSbpService>();
             services.AddScoped<IIikoWebSyncManager, IikoWebSyncManager>();
             services.AddScoped<IFrontPluginsSbpService, FrontPluginsSbpService>();
+            services.AddScoped<ISbpEventsService, SbpEventsService>();
 
             services.AddSingleton<IMethodCallSettingsFactory>(provider =>
             {
@@ -84,6 +88,13 @@ namespace iikoTransport.SbpService.Infrastructure.DI
                 var servicesSettings = provider.GetRequiredService<IServicesSettings>();
                 return new IikoWebClientOptions(servicesSettings.IikoWebServiceAddress);
             });
+            services.AddSingleton(provider =>
+            {
+                var settings = provider.GetRequiredService<IServicesSettings>();
+                return new SbpFrontClientOptions(settings.TransportServiceAddress, settings.DefaultCallTimeout);
+            });
+            
+            services.AddHttpClient<ISbpFrontClient, SbpFrontClient>();
             
             var webClientBuilder = services.AddHttpClient<IIikoWebClient, IikoWebClient>();
             if (!string.IsNullOrWhiteSpace(appSettings.IikoWebProxyAddress))

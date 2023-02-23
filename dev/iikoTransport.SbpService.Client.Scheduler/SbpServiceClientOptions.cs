@@ -1,15 +1,16 @@
 using System;
 using iikoTransport.ServiceClient;
 
-namespace iikoTransport.SbpService.Client.Scheduler;
-
-public class SbpServiceClientOptions : IClientOptions
+namespace iikoTransport.SbpService.Client.Scheduler
 {
-    public SbpServiceClientOptions(string baseUri)
+    public class SbpServiceClientOptions : IClientOptions
     {
-        if (string.IsNullOrWhiteSpace(baseUri)) throw new ArgumentNullException(nameof(baseUri));
-        BaseUri = baseUri;
-    }
+        public SbpServiceClientOptions(string baseUri)
+        {
+            if (string.IsNullOrWhiteSpace(baseUri)) throw new ArgumentNullException(nameof(baseUri));
+            BaseUri = baseUri;
+        }
 
-    public string BaseUri { get; }
+        public string BaseUri { get; }
+    }
 }
