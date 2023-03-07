@@ -26,7 +26,7 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         [Route("test1")]
         public async Task<string> TestRun1()
         {
-            return await testService.TestRun1();
+            return await testService.TestCreateQrcIdReservation();
         }
         
         /// <summary>
@@ -36,7 +36,7 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         [Route("test2")]
         public async Task<string> TestRun2(Guid? tgId)
         {
-            return await testService.TestRun2(tgId);
+            return await testService.TestCreateAndGetOneTimePaymentLinkPayloadForB2B(tgId);
         }
         
         /// <summary>
@@ -46,7 +46,7 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         [Route("test3")]
         public async Task<string> TestRun3(string? qrcId)
         {
-            return await testService.TestRun3(qrcId);
+            return await testService.TestGetQRCPayload(qrcId);
         }
     }
 }

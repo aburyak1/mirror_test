@@ -17,7 +17,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
         /// <summary>
         /// Идентификатор многоразовой Платежной ссылки, предварительно полученный в запросе "Получение идентификаторов для многоразовых ссылок СБП".
         /// </summary>
-        [DataMember(IsRequired = false)]
+        [DataMember(IsRequired = true)]
         public string QrcId { get; }
     }
 }

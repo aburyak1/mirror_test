@@ -76,8 +76,7 @@ namespace iikoTransport.SbpService.Services
         {
             if (call == null) throw new ArgumentNullException(nameof(call));
 
-            var response = await sbpClient.CreateQrcIdReservationV1(call.Context.CorrelationId,
-                new Nspk.CreateQrcIdReservationV1Request(call.Payload.Quantity));
+            var response = await sbpClient.CreateQrcIdReservationV1(call.Context.CorrelationId, call.Payload.Quantity);
             return response.Convert();
         }
 

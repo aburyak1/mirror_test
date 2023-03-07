@@ -6,18 +6,18 @@ namespace iikoTransport.SbpService.Services.Interfaces
     public interface ITestService
     {
         /// <summary>
-        /// Тестовый запрос к СБП.
+        /// Тестовый запрос к СБП на получение идентификаторов для многоразовых ссылок.
         /// </summary>
-        Task<string> TestRun1();
+        Task<string> TestCreateQrcIdReservation();
 
         /// <summary>
-        /// Тестовый запрос к СБП.
+        /// Тестовый запрос к СБП регистрация одноразовой Функциональной ссылки.
         /// </summary>
-        Task<string> TestRun2(Guid? tgId = null);
+        Task<string> TestCreateAndGetOneTimePaymentLinkPayloadForB2B(Guid? tgId = null);
 
         /// <summary>
-        /// Тестовый запрос к СБП.
+        /// Тестовый запрос к СБП на запрос содержимого Функциональной ссылки.
         /// </summary>
-        Task<string> TestRun3(string? qrcId = null);
+        Task<string> TestGetQRCPayload(string? qrcId = null);
     }
 }

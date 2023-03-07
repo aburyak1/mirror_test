@@ -25,7 +25,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         private const string CreateAndGetOneTimePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/one-time-use";
         private const string CreateAndGetReusablePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/reusable";
         private const string GetQrcPayloadPath = "/payment/v1/qrc-data/{0}/payload";
-        private const string CreateQrcIdReservationV1Path = "/payment/v1/qrc-id-reservation";
+        private const string CreateQrcIdReservationV1Path = "/payment/v1/qrc-id-reservation?quantity={0}";
         private const string CreateCashRegisterQrPath = "/payment/v1/cash-register-qrc";
         private const string CreateParamsPath = "/payment/v1/cash-register-qrc/{0}/params";
         private const string DeleteParamsPath = "/payment/v1/cash-register-qrc/{0}/params";
@@ -59,7 +59,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         /// Регистрация одноразовой Функциональной ссылки СБП для B2B.
         /// </summary>
         public async Task<SbpNspkResponse<QrcPayloadResponse>> CreateAndGetOneTimePaymentLinkPayloadForB2B(Guid correlationId,
-            CreateAndGetOneTimePaymentLinkPayloadForB2BRequest request, X509Certificate2? cert = null)
+            CreateAndGetOneTimePaymentLinkPayloadForB2BRequest request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
@@ -95,12 +95,10 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         /// <summary>
         /// Получение идентификаторов для многоразовых ссылок СБП.
         /// </summary>
-        public async Task<SbpNspkResponse<CreateQrcIdReservationV1Response>> CreateQrcIdReservationV1(Guid correlationId,
-            CreateQrcIdReservationV1Request request, X509Certificate2? cert = null)
+        public async Task<SbpNspkResponse<CreateQrcIdReservationV1Response>> CreateQrcIdReservationV1(Guid correlationId, int quantity)
         {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-
-            return await CallSpbNspkMethod<SbpNspkResponse<CreateQrcIdReservationV1Response>>(correlationId, CreateQrcIdReservationV1Path, request);
+            var uriDetails = string.Format(CreateQrcIdReservationV1Path, quantity);
+            return await CallSpbNspkMethod<SbpNspkResponse<CreateQrcIdReservationV1Response>>(correlationId, uriDetails, null, HttpMethod.Post);
         }
 
         /// <summary>

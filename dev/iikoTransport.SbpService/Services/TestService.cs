@@ -22,14 +22,13 @@ namespace iikoTransport.SbpService.Services
             this.nspkClient = nspkClient ?? throw new ArgumentNullException(nameof(nspkClient));
         }
         
-        public async Task<string> TestRun1()
+        public async Task<string> TestCreateQrcIdReservation()
         {
-            var request = new CreateQrcIdReservationV1Request(10);
-            var result = await nspkClient.CreateQrcIdReservationV1(Guid.NewGuid(), request);
+            var result = await nspkClient.CreateQrcIdReservationV1(Guid.NewGuid(), 10);
             return result.ToJson();
         }
 
-        public async Task<string> TestRun2(Guid? tgId = null)
+        public async Task<string> TestCreateAndGetOneTimePaymentLinkPayloadForB2B(Guid? tgId = null)
         {
             CreateAndGetOneTimePaymentLinkPayloadForB2BRequest request;
             if (tgId.HasValue)
@@ -60,7 +59,7 @@ namespace iikoTransport.SbpService.Services
             return result.ToJson();
         }
         
-        public async Task<string> TestRun3(string? qrcId = null)
+        public async Task<string> TestGetQRCPayload(string? qrcId = null)
         {
             var result = await nspkClient.GetQRCPayload(Guid.NewGuid(), qrcId ?? "AO1000670LSS7DN18SJQDNP4B05KLJL2");
             return result.ToJson();
