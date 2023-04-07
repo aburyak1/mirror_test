@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Company>iiko</Company>
+    <Copyright>Copyright © iiko</Copyright>
+    <Description>Клиентская библиотека, предоставляемая SbpService для PublicApi.</Description>
+    <PackageTags>iiko-transport sbp-service client publicapi-service</PackageTags>
+    <Version>8.5.2.1-trn1989v04</Version>
+    <FileVersion>$(Version)</FileVersion>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);1591;7035;0618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="iikoTransport.ServiceClient" Version="8.3.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\iikoTransport.SbpService.Contracts.PublicApi\iikoTransport.SbpService.Contracts.PublicApi.csproj" />
+  </ItemGroup>
+</Project>

@@ -2,11 +2,11 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Web;
 using iikoTransport.Logging;
 using iikoTransport.Logging.Metrics;
-using iikoTransport.SbpService.Services.SbpNspk.Contracts;
+using iikoTransport.SbpService.Services.SbpNspk.Contracts.Merchants;
 using iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperations;
 using iikoTransport.Utils;
 
@@ -25,14 +25,18 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         private const string CreateAndGetOneTimePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/one-time-use";
         private const string CreateAndGetReusablePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/reusable";
         private const string GetQrcPayloadPath = "/payment/v1/qrc-data/{0}/payload";
+        private const string GetStatusQrcOperationsPath = "/payment/v2/qrc-status";
         private const string CreateQrcIdReservationV1Path = "/payment/v1/qrc-id-reservation?quantity={0}";
         private const string CreateCashRegisterQrPath = "/payment/v1/cash-register-qrc";
         private const string CreateParamsPath = "/payment/v1/cash-register-qrc/{0}/params";
         private const string DeleteParamsPath = "/payment/v1/cash-register-qrc/{0}/params";
+        private const string GetCashRegQrStatusPath = "/payment/v1/cash-register-qrc/{0}";
+        private const string StatusCashRegQrPath = "/payment/v1/cash-register-qrc/{0}/{1}";
         private const string CreateRefundRequestPath = "/payment/v1/agent/refund/{0}";
         private const string GetRefundIdRequestPath = "/payment/v1/agent/refund/{0}?agentRefundRequestId={1}";
         private const string RefundRequestStatusV2Path = "/payment/v2/agent/refund/{0}/{1}";
-        private const string GetStatusQrcOperationsPath = "/payment/v2/qrc-status";
+        private const string SetNewAccountPath = "/payment/v1/cash-register-qrc/{0}";
+        private const string SearchMerchantDataPath = "/merchant/v1/merchant/search?ogrn={0}&bic={1}";
 
         public SbpNspkClient(
             HttpClient httpClient,
@@ -59,24 +63,24 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         /// Регистрация одноразовой Функциональной ссылки СБП для B2B.
         /// </summary>
         public async Task<SbpNspkResponse<QrcPayloadResponse>> CreateAndGetOneTimePaymentLinkPayloadForB2B(Guid correlationId,
-            CreateAndGetOneTimePaymentLinkPayloadForB2BRequest request)
+            CreateAndGetOneTimePaymentLinkPayloadForB2BRequest request, string? mediaType, int? width, int? height)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(
-                correlationId, CreateAndGetOneTimePaymentLinkPayloadForB2BPath, request);
+            var uriDetails = ConcatMediaType(CreateAndGetOneTimePaymentLinkPayloadForB2BPath, mediaType, width, height);
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, request);
         }
 
         /// <summary>
         /// Регистрация многоразовой Функциональной ссылки СБП для B2B.
         /// </summary>
         public async Task<SbpNspkResponse<QrcPayloadResponse>> CreateAndGetReusablePaymentLinkPayloadForB2B(Guid correlationId,
-            CreateAndGetReusablePaymentLinkPayloadForB2BRequest request)
+            CreateAndGetReusablePaymentLinkPayloadForB2BRequest request, string? mediaType, int? width, int? height)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId,
-                CreateAndGetReusablePaymentLinkPayloadForB2BPath, request);
+            var uriDetails = ConcatMediaType(CreateAndGetReusablePaymentLinkPayloadForB2BPath, mediaType, width, height);
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, request);
         }
 
         /// <summary>
@@ -84,12 +88,28 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         /// </summary>
         /// <param name="correlationId"></param>
         /// <param name="qrcId">Идентификатор зарегистрированной Функциональной ссылки СБП</param>
-        public async Task<SbpNspkResponse<QrcPayloadResponse>> GetQRCPayload(Guid correlationId, string qrcId)
+        /// <param name="mediaType">Опциональное получение QR-кода для Кассовой ссылки СБП</param>
+        /// <param name="width">Ширина изображения</param>
+        /// <param name="height">Высота изображения</param>
+        public async Task<SbpNspkResponse<QrcPayloadResponse>> GetQRCPayload(Guid correlationId, string qrcId, string? mediaType, int? width,
+            int? height)
         {
             if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
 
-            var uriDetails = string.Format(GetQrcPayloadPath, qrcId);
+            var uriDetails = ConcatMediaType(string.Format(GetQrcPayloadPath, qrcId), mediaType, width, height);
             return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, null);
+        }
+
+        /// <summary>
+        /// Запрос статуса Операций СБП по идентификатору QR Dynamic (v2)
+        /// </summary>
+        public async Task<SbpNspkResponse<GetStatusQRCOperationsResponse[]>> GetStatusQRCOperations(Guid correlationId,
+            GetStatusQRCOperationsRequest request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            var uriDetails = string.Format(GetStatusQrcOperationsPath);
+            return await CallSpbNspkMethod<SbpNspkResponse<GetStatusQRCOperationsResponse[]>>(correlationId, uriDetails, request, HttpMethod.Put);
         }
 
         /// <summary>
@@ -105,12 +125,12 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         /// Регистрация Кассовой ссылки СБП.
         /// </summary>
         public async Task<SbpNspkResponse<QrcPayloadResponse>> СreateCashRegisterQr(Guid correlationId,
-            CreateCashRegisterQrRequest request)
+            CreateCashRegisterQrRequest request, string? mediaType, int? width, int? height)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId,
-                CreateCashRegisterQrPath, request);
+            var uriDetails = ConcatMediaType(CreateCashRegisterQrPath, mediaType, width, height);
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, request);
         }
 
         /// <summary>
@@ -143,15 +163,30 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         }
 
         /// <summary>
-        /// Запрос статуса Операций СБП по идентификатору QR Dynamic (v2)
+        /// Запрос статуса Кассовой ссылки СБП.
         /// </summary>
-        public async Task<SbpNspkResponse<GetStatusQRCOperationsResponse[]>> GetStatusQRCOperations(Guid correlationId,
-            GetStatusQRCOperationsRequest request)
+        /// <param name="correlationId"></param>
+        /// <param name="qrcId">Идентификатор зарегистрированной Кассовой ссылки СБП</param>
+        public async Task<SbpNspkResponse<GetCashRegQrStatusResponse>> GetCashRegQrStatus(Guid correlationId, string qrcId)
         {
-            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
 
-            var uriDetails = string.Format(GetStatusQrcOperationsPath);
-            return await CallSpbNspkMethod<SbpNspkResponse<GetStatusQRCOperationsResponse[]>>(correlationId, uriDetails, request, HttpMethod.Put);
+            var uriDetails = string.Format(GetCashRegQrStatusPath, qrcId);
+            return await CallSpbNspkMethod<SbpNspkResponse<GetCashRegQrStatusResponse>>(correlationId, uriDetails, null);
+        }
+
+        /// <summary>
+        /// Статус Операции по Кассовой ссылке СБП (v1).
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="qrcId">Идентификатор Кассовой ссылки СБП</param>
+        /// <param name="paramsId">Идентификатор активного набора параметров</param>
+        public async Task<SbpNspkResponse<StatusCashRegQrResponse>> StatusCashRegQr(Guid correlationId, string qrcId, string paramsId)
+        {
+            if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
+
+            var uriDetails = string.Format(StatusCashRegQrPath, qrcId, paramsId);
+            return await CallSpbNspkMethod<SbpNspkResponse<StatusCashRegQrResponse>>(correlationId, uriDetails, null);
         }
 
         /// <summary>
@@ -203,13 +238,43 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         }
 
         /// <summary>
+        /// Изменение счета ЮЛ, ИП или самозанятого для зарегистрированной Кассовой ссылки СБП.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="qrcId">Идентификатор зарегистрированной Кассовой ссылки СБП</param>
+        /// <param name="account">Счет ЮЛ, ИП или самозанятого></param>
+        public async Task<SbpNspkResponse<SetNewAccountResponse>> SetNewAccount(Guid correlationId, string qrcId, string account)
+        {
+            if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
+            if (account == null) throw new ArgumentNullException(nameof(account));
+
+            var uriDetails = string.Format(SetNewAccountPath, qrcId);
+            return await CallSpbNspkMethod<SbpNspkResponse<SetNewAccountResponse>>(correlationId, uriDetails, new { account }, HttpMethod.Put);
+        }
+
+        /// <summary>
+        /// Получение списка ТСП, зарегистрированных для ЮЛ или ИП.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="ogrn">ОГРН ЮЛ или ИП</param>
+        /// <param name="bic">БИК банка-участника, в котором проводятся расчеты по операциям ТСП</param>
+        public async Task<SbpNspkResponse<SearchMerchantDataResponse>> SearchMerchantData(Guid correlationId, string ogrn, string bic)
+        {
+            if (ogrn == null) throw new ArgumentNullException(nameof(ogrn));
+            if (bic == null) throw new ArgumentNullException(nameof(bic));
+
+            var uriDetails = string.Format(SearchMerchantDataPath, ogrn, bic);
+            return await CallSpbNspkMethod<SbpNspkResponse<SearchMerchantDataResponse>>(correlationId, uriDetails);
+        }
+
+        /// <summary>
         /// Вызывать метод api sbp.nspk и вернуть десериализованный результат.
         /// </summary>
         /// <param name="correlationId">Correlation Id.</param>
         /// <param name="uriDetails">Метод.</param>
         /// <param name="body">Body для post-запроса.</param>
         /// <param name="httpMethod"></param>
-        private async Task<T> CallSpbNspkMethod<T>(Guid correlationId, string uriDetails, object? body, HttpMethod? httpMethod = null)
+        private async Task<T> CallSpbNspkMethod<T>(Guid correlationId, string uriDetails, object? body = null, HttpMethod? httpMethod = null)
         {
             if (string.IsNullOrWhiteSpace(uriDetails)) throw new ArgumentNullException(nameof(uriDetails));
             if (httpMethod == null) httpMethod = body == null ? HttpMethod.Get : HttpMethod.Post;
@@ -251,6 +316,18 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         {
             var idx = uri.IndexOf("?", StringComparison.InvariantCulture);
             return idx == -1 ? uri : uri.Substring(0, idx);
+        }
+
+        private string ConcatMediaType(string basePath, string? mediaType, int? width, int? height)
+        {
+            if (string.IsNullOrWhiteSpace(mediaType))
+            {
+                return basePath;
+            }
+
+            return $"{basePath}?mediaType={HttpUtility.UrlEncode(mediaType)}" +
+                   $"{(width.HasValue ? "&width=" : string.Empty)}{width}" +
+                   $"{(height.HasValue ? "&height=" : string.Empty)}{height}";
         }
     }
 }

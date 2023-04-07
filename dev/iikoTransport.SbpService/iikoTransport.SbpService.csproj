@@ -27,7 +27,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="iikoTransport.Common.Contracts" Version="8.3.1.1" />
+    <PackageReference Include="iikoTransport.DictionariesService.Client.Transport" Version="8.4.2.2" />
     <PackageReference Include="iikoTransport.Logging.Serilog" Version="8.1.4.1" />
+    <PackageReference Include="iikoTransport.PublicApi.Contracts" Version="8.4.6.2" />
     <PackageReference Include="iikoTransport.Service" Version="8.2.3.1" />
     <PackageReference Include="iikoTransport.ServiceClient" Version="8.1.4.1" />
     <PackageReference Include="iikoTransport.Postgres" Version="8.2.5.1" />
@@ -40,5 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\iikoTransport.SbpService.Contracts.FrontPlugin\iikoTransport.SbpService.Contracts.FrontPlugin.csproj" />
+    <ProjectReference Include="..\iikoTransport.SbpService.Contracts.PublicApi\iikoTransport.SbpService.Contracts.PublicApi.csproj" />
   </ItemGroup>
 </Project>

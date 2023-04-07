@@ -40,14 +40,14 @@ namespace iikoTransport.SbpService.Services
             if (call == null) throw new ArgumentNullException(nameof(call));
             var request = call.Payload;
 
-            log.Debug($"SendFinalStatusAckV2 {request.QrcId}|{request.Status}|{request.Amount}|{request.Timestamp}.");
-            var paymentLink = await paymentLinksStorage.Get(request.QrcId);
+            log.Debug($"SendFinalStatusAckV2 {request.QrcId}|{request.ParamsId}|{request.Status}|{request.Amount}|{request.Timestamp}.");
+            var paymentLink = await paymentLinksStorage.Get(request.QrcId, request.ParamsId);
             if (paymentLink == null)
-                throw new Exception($"Creator of payment linq with qrcId {request.QrcId} not found.");
+                throw new Exception($"Creator of payment linq with qrcId {request.QrcId} {request.ParamsId} not found.");
             var requestToFront = request.Convert();
             var callSettings = callSettingsFactory.CreateFromContext(call.Context);
-            await frontClient.CallFrontPluginMethod(RouteNames.SendFinalStatusAck, requestToFront, paymentLink.TerminalGroupUocId, SbpPluginModuleId,
-                callSettings);
+            await frontClient.CallFrontPluginMethod(RouteNames.SendFinalStatusAck, requestToFront, paymentLink.TerminalGroupUocId,
+                paymentLink.TerminalId, SbpPluginModuleId, callSettings);
         }
 
         public async Task SendFinalStatusB2CAck(Call<SendFinalStatusB2CAckRequest> call)
@@ -61,8 +61,8 @@ namespace iikoTransport.SbpService.Services
                 throw new Exception($"Creator of refund request with opkcRefundRequestId {request.OpkcRefundRequestId} not found.");
             var requestToFront = request.Convert();
             var callSettings = callSettingsFactory.CreateFromContext(call.Context);
-            await frontClient.CallFrontPluginMethod(RouteNames.SendFinalStatusB2CAck, requestToFront, originalRefundRequest.TerminalGroupUocId,
-                SbpPluginModuleId, callSettings);
+            await frontClient.CallFrontPluginMethod(RouteNames.SendFinalStatusB2CAck, requestToFront, originalRefundRequest.TerminalGroupUocId, 
+                originalRefundRequest.TerminalId, SbpPluginModuleId, callSettings);
         }
 
         public async Task RefundResolution(Call<RefundResolutionRequest> call)
@@ -78,7 +78,7 @@ namespace iikoTransport.SbpService.Services
             var requestToFront = request.Convert();
             var callSettings = callSettingsFactory.CreateFromContext(call.Context);
             await frontClient.CallFrontPluginMethod(RouteNames.RefundResolution, requestToFront, originalRefundRequest.TerminalGroupUocId,
-                SbpPluginModuleId, callSettings);
+                originalRefundRequest.TerminalId, SbpPluginModuleId, callSettings);
         }
     }
 }

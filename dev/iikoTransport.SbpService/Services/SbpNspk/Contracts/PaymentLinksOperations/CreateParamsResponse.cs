@@ -9,14 +9,14 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperat
     [DataContract]
     public class CreateParamsResponse
     {
-        public CreateParamsResponse(string paramsId, string qrcId, string amount, string currency, string paymentPurpose, string fraudScore)
+        public CreateParamsResponse(string paramsId, string qrcId, string amount, string currency, string? paymentPurpose, string? fraudScore)
         {
             ParamsId = paramsId ?? throw new ArgumentNullException(nameof(paramsId));
             QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
             Amount = amount ?? throw new ArgumentNullException(nameof(amount));
             Currency = currency ?? throw new ArgumentNullException(nameof(currency));
-            PaymentPurpose = paymentPurpose ?? throw new ArgumentNullException(nameof(paymentPurpose));
-            FraudScore = fraudScore ?? throw new ArgumentNullException(nameof(fraudScore));
+            PaymentPurpose = paymentPurpose;
+            FraudScore = fraudScore;
         }
 
         /// <summary>
@@ -40,19 +40,19 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperat
         /// <summary>
         /// Валюта операции.
         /// </summary>
-        [DataMember(IsRequired = false)]
+        [DataMember(IsRequired = true)]
         public string Currency { get; }
 
         /// <summary>
         /// Назначение платежа.
         /// </summary>
         [DataMember(IsRequired = false)]
-        public string PaymentPurpose { get; }
+        public string? PaymentPurpose { get; }
 
         /// <summary>
         /// Индикатор Подозрительной Операции Агента ТСП.
         /// </summary>
         [DataMember(IsRequired = false)]
-        public string FraudScore { get; }
+        public string? FraudScore { get; }
     }
 }

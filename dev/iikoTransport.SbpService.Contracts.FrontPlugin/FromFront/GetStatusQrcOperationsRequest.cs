@@ -7,9 +7,9 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
     /// Get status of QR-code operations request.
     /// </summary>
     [DataContract]
-    public class GetStatusQRCOperationsRequest
+    public class GetStatusQrcOperationsRequest
     {
-        public GetStatusQRCOperationsRequest(string[] qrcIds)
+        public GetStatusQrcOperationsRequest(string[] qrcIds)
         {
             QrcIds = qrcIds ?? throw new ArgumentNullException(nameof(qrcIds));
         }

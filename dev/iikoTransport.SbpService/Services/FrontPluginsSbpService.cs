@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using iikoTransport.Common.Contracts;
 using iikoTransport.Logging;
 using iikoTransport.SbpService.Contracts.FrontPlugin.FromFront;
-using iikoTransport.SbpService.Converters;
+using iikoTransport.SbpService.Converters.FrontPlugin;
 using iikoTransport.SbpService.Services.Interfaces;
 using iikoTransport.SbpService.Services.SbpNspk;
 using iikoTransport.SbpService.Storage.Contracts;
@@ -39,12 +39,15 @@ namespace iikoTransport.SbpService.Services
         {
             if (call == null) throw new ArgumentNullException(nameof(call));
 
+            var request = call.Payload;
             var tgId = GetTerminalGroupUocId(call.Context);
             var setting = await settingsStorage.Get(tgId, call.Context.CancellationToken);
-            var requestToSbp = call.Payload.Convert(setting, sbpClient.AgentId);
-            var response = await sbpClient.CreateAndGetOneTimePaymentLinkPayloadForB2B(call.Context.CorrelationId, requestToSbp);
+            var requestToSbp = request.Convert(setting, sbpClient.AgentId);
+            var response = await sbpClient.CreateAndGetOneTimePaymentLinkPayloadForB2B(call.Context.CorrelationId, requestToSbp, request.MediaType,
+                request.Width, request.Height);
 
-            await SavePaymentLinkInfo(response, tgId, requestToSbp.MerchantId);
+            var terminalId = GetTerminalId(call.Context);
+            await SavePaymentLinkInfo(response, tgId, terminalId, requestToSbp.MerchantId);
             return response.Convert();
         }
 
@@ -53,12 +56,15 @@ namespace iikoTransport.SbpService.Services
         {
             if (call == null) throw new ArgumentNullException(nameof(call));
 
+            var request = call.Payload;
             var tgId = GetTerminalGroupUocId(call.Context);
             var setting = await settingsStorage.Get(tgId, call.Context.CancellationToken);
-            var requestToSbp = call.Payload.Convert(setting, sbpClient.AgentId);
-            var response = await sbpClient.CreateAndGetReusablePaymentLinkPayloadForB2B(call.Context.CorrelationId, requestToSbp);
+            var requestToSbp = request.Convert(setting, sbpClient.AgentId);
+            var response = await sbpClient.CreateAndGetReusablePaymentLinkPayloadForB2B(call.Context.CorrelationId, requestToSbp, request.MediaType,
+                request.Width, request.Height);
 
-            await SavePaymentLinkInfo(response, tgId, requestToSbp.MerchantId);
+            var terminalId = GetTerminalId(call.Context);
+            await SavePaymentLinkInfo(response, tgId, terminalId, requestToSbp.MerchantId);
             return response.Convert();
         }
 
@@ -67,7 +73,18 @@ namespace iikoTransport.SbpService.Services
         {
             if (call == null) throw new ArgumentNullException(nameof(call));
 
-            var response = await sbpClient.GetQRCPayload(call.Context.CorrelationId, call.Payload.QrcId);
+            var request = call.Payload;
+            var response = await sbpClient.GetQRCPayload(call.Context.CorrelationId, request.QrcId, request.MediaType, request.Width, request.Height);
+            return response.Convert();
+        }
+
+        /// <inheritdoc />
+        public async Task<GetStatusQrcOperationsResponse> GetStatusQrcOperations(Call<GetStatusQrcOperationsRequest> call)
+        {
+            if (call == null) throw new ArgumentNullException(nameof(call));
+
+            var response = await sbpClient.GetStatusQRCOperations(call.Context.CorrelationId,
+                new Nspk.GetStatusQRCOperationsRequest(call.Payload.QrcIds));
             return response.Convert();
         }
 
@@ -85,12 +102,12 @@ namespace iikoTransport.SbpService.Services
         {
             if (call == null) throw new ArgumentNullException(nameof(call));
 
+            var request = call.Payload;
             var tgId = GetTerminalGroupUocId(call.Context);
             var setting = await settingsStorage.Get(tgId, call.Context.CancellationToken);
             var requestToSbp = call.Payload.Convert(setting, sbpClient.AgentId);
-            var response = await sbpClient.СreateCashRegisterQr(call.Context.CorrelationId, requestToSbp);
-
-            await SavePaymentLinkInfo(response, tgId, requestToSbp.MerchantId);
+            var response = await sbpClient.СreateCashRegisterQr(call.Context.CorrelationId, requestToSbp, request.MediaType, request.Width,
+                request.Height);
             return response.Convert();
         }
 
@@ -99,8 +116,12 @@ namespace iikoTransport.SbpService.Services
         {
             if (call == null) throw new ArgumentNullException(nameof(call));
 
+            var tgId = GetTerminalGroupUocId(call.Context);
             var response = await sbpClient.CreateParams(call.Context.CorrelationId, call.Payload.QrcId,
                 new Nspk.CreateParamsRequest(call.Payload.Amount));
+
+            var terminalId = GetTerminalId(call.Context);
+            await SaveCashRegPaymentLinkInfo(response, tgId, terminalId, call.Payload.QrcId);
             return response.Convert();
         }
 
@@ -114,12 +135,20 @@ namespace iikoTransport.SbpService.Services
         }
 
         /// <inheritdoc />
-        public async Task<GetStatusQrcOperationsResponse> GetStatusQrcOperations(Call<GetStatusQRCOperationsRequest> call)
+        public async Task<GetCashRegQrStatusResponse> GetCashRegQrStatus(Call<GetCashRegQrStatusRequest> call)
         {
             if (call == null) throw new ArgumentNullException(nameof(call));
 
-            var response = await sbpClient.GetStatusQRCOperations(call.Context.CorrelationId,
-                new Nspk.GetStatusQRCOperationsRequest(call.Payload.QrcIds));
+            var response = await sbpClient.GetCashRegQrStatus(call.Context.CorrelationId, call.Payload.QrcId);
+            return response.Convert();
+        }
+
+        /// <inheritdoc />
+        public async Task<GetStatusCashRegQrOperationResponse> GetStatusCashRegQrOperation(Call<GetStatusCashRegQrOperationRequest> call)
+        {
+            if (call == null) throw new ArgumentNullException(nameof(call));
+
+            var response = await sbpClient.StatusCashRegQr(call.Context.CorrelationId, call.Payload.QrcId, call.Payload.ParamsId);
             return response.Convert();
         }
 
@@ -133,7 +162,8 @@ namespace iikoTransport.SbpService.Services
             var requestToSbp = call.Payload.Convert(setting);
             var response = await sbpClient.CreateRefundRequest(call.Context.CorrelationId, call.Payload.TrxId, requestToSbp);
 
-            await SaveRefundRequestInfo(response, call.Payload.TrxId, tgId, requestToSbp.MerchantId);
+            var terminalId = GetTerminalId(call.Context);
+            await SaveRefundRequestInfo(response, call.Payload.TrxId, tgId, terminalId, requestToSbp.MerchantId);
             return response.Convert();
         }
 
@@ -159,18 +189,26 @@ namespace iikoTransport.SbpService.Services
         private Guid GetTerminalGroupUocId(ICallContext callContext)
         {
             // Get appId header - in this case it's terminal group id.
-            string? tgIdHeader = callContext.Headers.GetAppId();
+            var tgIdHeader = callContext.Headers.GetAppId();
             if (!Guid.TryParse(tgIdHeader, out var tgId))
                 throw new InvalidOperationException($"Unable to parse appId header as guid: {tgIdHeader}");
             return tgId;
         }
 
-        private async Task SavePaymentLinkInfo(Nspk.SbpNspkResponse<Nspk.QrcPayloadResponse> sbpResponse, Guid terminalGroupUocId, string merchantId)
+        private Guid? GetTerminalId(ICallContext callContext)
+        {
+            var trIdHeader = callContext.Headers.GetTerminalId();
+            if (!Guid.TryParse(trIdHeader, out var trId))
+                return null;
+            return trId;
+        }
+
+        private async Task SavePaymentLinkInfo(Nspk.SbpNspkResponse<Nspk.QrcPayloadResponse> sbpResponse, Guid terminalGroupUocId, Guid? terminalId, string merchantId)
         {
             if (!sbpResponse.Code.Equals(Nspk.PaymentApiResponseCode.RQ00000.ToString()) || sbpResponse.Data == null)
             {
                 log.Error($"Failed payment link creation for merchant={merchantId} from uocTerminalGroup={terminalGroupUocId}. " +
-                          "Error {sbpResponse.Code} {sbpResponse.Message}");
+                          $"Error {sbpResponse.Code} {sbpResponse.Message}");
                 return;
             }
 
@@ -180,13 +218,35 @@ namespace iikoTransport.SbpService.Services
                 return;
             }
 
-            var paymentLink = new PaymentLink(sbpResponse.Data!.QrcId, terminalGroupUocId, DateTime.UtcNow);
+            var paymentLink = new PaymentLink(Guid.NewGuid(), sbpResponse.Data.QrcId, null, terminalGroupUocId, terminalId, DateTime.UtcNow);
             await paymentLinksStorage.Upsert(paymentLink);
             log.Info($"Payment link saved with id={paymentLink.QrcId} for merchant={merchantId} from uocTerminalGroup={terminalGroupUocId}. ");
         }
 
+        private async Task SaveCashRegPaymentLinkInfo(Nspk.SbpNspkResponse<Nspk.CreateParamsResponse> sbpResponse, Guid terminalGroupUocId,
+            Guid? terminalId, string requestQrId)
+        {
+            if (!sbpResponse.Code.Equals(Nspk.PaymentApiResponseCode.RQ00000.ToString()) || sbpResponse.Data == null)
+            {
+                log.Error($"Failed payment link activation for qrId={requestQrId} from uocTerminalGroup={terminalGroupUocId}. " +
+                          $"Error {sbpResponse.Code} {sbpResponse.Message}");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(sbpResponse.Data.QrcId) || string.IsNullOrWhiteSpace(sbpResponse.Data.ParamsId))
+            {
+                log.Error($"Failed payment link activation for qrId={requestQrId} from uocTerminalGroup={terminalGroupUocId}. Empty data. ");
+                return;
+            }
+
+            var paymentLink = new PaymentLink(Guid.NewGuid(), sbpResponse.Data.QrcId, sbpResponse.Data.ParamsId, terminalGroupUocId, terminalId,
+                DateTime.UtcNow);
+            await paymentLinksStorage.Upsert(paymentLink);
+            log.Info($"Payment link params saved with {paymentLink.QrcId}|{paymentLink.ParamsId} from uocTerminalGroup={terminalGroupUocId}. ");
+        }
+
         private async Task SaveRefundRequestInfo(Nspk.SbpNspkResponse<Nspk.CreatedRefundResponse> sbpResponse, string trxId, Guid terminalGroupUocId,
-            string merchantId)
+            Guid? terminalId, string merchantId)
         {
             if (!sbpResponse.Code.Equals(Nspk.PaymentApiResponseCode.RQ00000.ToString()) || sbpResponse.Data == null)
             {
@@ -201,7 +261,8 @@ namespace iikoTransport.SbpService.Services
                 return;
             }
 
-            var refundRequest = new RefundRequest(sbpResponse.Data!.OpkcRefundRequestId, trxId, terminalGroupUocId);
+            var refundRequest = new RefundRequest(Guid.NewGuid(), sbpResponse.Data.OpkcRefundRequestId, trxId, terminalGroupUocId, terminalId,
+                DateTime.UtcNow);
             await refundRequestsStorage.Upsert(refundRequest);
             log.Info(
                 $"Refund request saved with id={refundRequest.OpkcRefundRequestId} for merchant={merchantId} from uocTerminalGroup={terminalGroupUocId}. ");

@@ -8,6 +8,11 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
     public interface IServicesSettings
     {
         /// <summary>
+        /// Адрес DictionariesService 
+        /// </summary>
+        string DictionariesServiceAddress { get; }
+
+        /// <summary>
         /// Адрес TransportService.
         /// </summary>
         string TransportServiceAddress { get; }

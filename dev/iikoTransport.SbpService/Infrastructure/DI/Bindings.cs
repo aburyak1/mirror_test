@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Authentication;
+using iikoTransport.DictionariesService.Client.Transport;
 using iikoTransport.EmployeesService.IikoWebIntegration;
 using iikoTransport.Logging;
 using iikoTransport.Logging.Events;
@@ -72,11 +73,11 @@ namespace iikoTransport.SbpService.Infrastructure.DI
             services.AddSingleton<IPaymentLinksStorage, PaymentLinksStorage>();
             services.AddSingleton<IRefundRequestsStorage, RefundRequestsStorage>();
             
-            services.AddScoped<ITestService, TestService>();
             services.AddScoped<ISchedulerSbpService, SchedulerSbpService>();
             services.AddScoped<IIikoWebSyncManager, IikoWebSyncManager>();
-            services.AddScoped<IFrontPluginsSbpService, FrontPluginsSbpService>();
             services.AddScoped<ISbpEventsService, SbpEventsService>();
+            services.AddScoped<IFrontPluginsSbpService, FrontPluginsSbpService>();
+            services.AddScoped<IPublicApiSbpService, PublicApiSbpService>();
 
             services.AddSingleton<IMethodCallSettingsFactory>(provider =>
             {
@@ -93,7 +94,13 @@ namespace iikoTransport.SbpService.Infrastructure.DI
                 var settings = provider.GetRequiredService<IServicesSettings>();
                 return new SbpFrontClientOptions(settings.TransportServiceAddress, settings.DefaultCallTimeout);
             });
+            services.AddSingleton(provider =>
+            {
+                var servicesSettings = provider.GetRequiredService<IServicesSettings>();
+                return new DictionariesServiceClientOptions(servicesSettings.DictionariesServiceAddress);
+            });
             
+            services.AddHttpClient<IDictionariesServiceClient, DictionariesServiceClient>();
             services.AddHttpClient<ISbpFrontClient, SbpFrontClient>();
             
             var webClientBuilder = services.AddHttpClient<IIikoWebClient, IikoWebClient>();

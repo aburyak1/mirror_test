@@ -49,6 +49,15 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         }
 
         /// <summary>
+        /// Запрос статуса Операций СБП по идентификаторам QR Dynamic. 
+        /// </summary>
+        [HttpPost]
+        public async Task<GetStatusQrcOperationsResponse> GetStatusQrcOperations([FromBody] GetStatusQrcOperationsRequest request)
+        {
+            return await frontPluginsSbpService.GetStatusQrcOperations(HttpContext.CreateCall(request));
+        }
+
+        /// <summary>
         /// Получение идентификаторов для многоразовых ссылок СБП.
         /// </summary>
         [HttpPost]
@@ -85,12 +94,21 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         }
 
         /// <summary>
-        /// Запрос статуса Операций СБП по идентификаторам QR. 
+        /// Запрос статуса Кассовой ссылки СБП.
         /// </summary>
         [HttpPost]
-        public async Task<GetStatusQrcOperationsResponse> GetStatusQrcOperations([FromBody] GetStatusQRCOperationsRequest request)
+        public async Task<GetCashRegQrStatusResponse> GetCashRegQrStatus([FromBody] GetCashRegQrStatusRequest request)
         {
-            return await frontPluginsSbpService.GetStatusQrcOperations(HttpContext.CreateCall(request));
+            return await frontPluginsSbpService.GetCashRegQrStatus(HttpContext.CreateCall(request));
+        }
+
+        /// <summary>
+        /// Статус Операции по Кассовой ссылке СБП.
+        /// </summary>
+        [HttpPost]
+        public async Task<GetStatusCashRegQrOperationResponse> GetStatusCashRegQrOperation([FromBody] GetStatusCashRegQrOperationRequest request)
+        {
+            return await frontPluginsSbpService.GetStatusCashRegQrOperation(HttpContext.CreateCall(request));
         }
 
         /// <summary>

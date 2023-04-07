@@ -10,6 +10,8 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
     {
         public string ConnectionString { get; set; } = null!;
         
+        public string DictionariesServiceAddress { get; set; } = null!;
+        
         public string TransportServiceAddress { get; set; } = null!;
         
         public string IikoWebServiceAddress { get; set; } = null!;

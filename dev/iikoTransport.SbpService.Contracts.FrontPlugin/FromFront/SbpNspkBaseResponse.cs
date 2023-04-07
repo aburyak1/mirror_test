@@ -17,13 +17,13 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
         }
 
         /// <summary>
-        /// Код ответа.
+        /// Response code.
         /// </summary>
         [DataMember(IsRequired = true)]
         public string Code { get; }
 
         /// <summary>
-        /// Описание кода ответа.
+        /// Response code details.
         /// </summary>
         [DataMember(IsRequired = true)]
         public string Message { get; }

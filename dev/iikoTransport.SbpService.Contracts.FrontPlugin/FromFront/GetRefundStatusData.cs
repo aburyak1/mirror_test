@@ -37,7 +37,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
 
         /// <summary>
         /// Код ответа, соответствующий решению Банка Плательщика по запросу на возврат. 
-        /// Enum:"RQ00030" "RQ00031" "RQ05039" "RQ05040" "RQ05041" "RQ05052" "RQ07999".
+        /// <remarks>Enum:"RQ00030" "RQ00031" "RQ05039" "RQ05040" "RQ05041" "RQ05052" "RQ07999".</remarks>
         /// </summary>
         [DataMember(IsRequired = false)]
         public string? RefundStatusCode { get; }

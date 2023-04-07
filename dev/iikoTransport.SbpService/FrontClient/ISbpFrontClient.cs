@@ -16,8 +16,9 @@ namespace iikoTransport.SbpService.FrontClient
         /// <param name="methodUri">Method uri of plugin api.</param>
         /// <param name="bodyJson">Body to pass to plugin method.</param>
         /// <param name="terminalGroupUocId">Terminal Group ID in UOC.</param>
+        /// <param name="terminalId">Terminal ID in RMS.</param>
         /// <param name="pluginModuleId">Plugin licence id.</param>
         /// <param name="callSettings">http call settings to call TransportService.</param>
-        Task CallFrontPluginMethod(string methodUri, object bodyJson, Guid terminalGroupUocId, int pluginModuleId, MethodCallSettings callSettings);
+        Task CallFrontPluginMethod(string methodUri, object bodyJson, Guid terminalGroupUocId, Guid? terminalId, int pluginModuleId, MethodCallSettings callSettings);
     }
 }

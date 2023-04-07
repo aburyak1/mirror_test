@@ -21,6 +21,11 @@
         public const string GetQrcPayload = "PluginsSbp/GetQrcPayload";
 
         /// <summary>
+        /// Get status of dynamic QR-code operations method route. 
+        /// </summary>
+        public const string GetStatusQrcOperations = "PluginsSbp/GetStatusQrcOperations";
+
+        /// <summary>
         /// Reservate QR-code IDs for reusable payment links method route.
         /// </summary>
         public const string CreateQrcIdReservation = "PluginsSbp/CreateQrcIdReservation";
@@ -41,9 +46,14 @@
         public const string DeactivateCashRegisterQr = "PluginsSbp/DeactivateCashRegisterQr";
 
         /// <summary>
-        /// Get status of QR-code operations method route. 
+        /// Get status of cash register QR-code method route.
         /// </summary>
-        public const string GetStatusQrcOperations = "PluginsSbp/GetStatusQrcOperations";
+        public const string GetCashRegQrStatus = "PluginsSbp/GetCashRegQrStatus";
+
+        /// <summary>
+        /// Get status of cash register QR-code operation method route.
+        /// </summary>
+        public const string GetStatusCashRegQrOperation = "PluginsSbp/GetStatusCashRegQrOperation";
 
         /// <summary>
         /// Create refund request method route. 

@@ -37,16 +37,25 @@ namespace iikoTransport.SbpService.Storage
 
             var query =
                 $"insert into {RefundRequest.TableName} (" +
+                $"  {RefundRequest.IdCol}, " +
                 $"  {RefundRequest.OpkcRefundRequestIdCol}, " +
                 $"  {RefundRequest.TrxIdCol}, " +
-                $"  {RefundRequest.TerminalGroupUocIdCol} ) " +
-                "values(" +
+                $"  {RefundRequest.TerminalGroupUocIdCol}, " +
+                $"  {RefundRequest.TerminalIdCol}, " +
+                $"  {RefundRequest.UpdatedAtCol} ) " +
+                " values(" +
+                $"  @{nameof(RefundRequest.Id)}, " +
                 $"  @{nameof(RefundRequest.OpkcRefundRequestId)}, " +
                 $"  @{nameof(RefundRequest.TrxId)}, " +
-                $"  @{nameof(RefundRequest.TerminalGroupUocId)} ) " +
+                $"  @{nameof(RefundRequest.TerminalGroupUocId)}, " +
+                $"  @{nameof(RefundRequest.TerminalId)}, " +
+                $"  @{nameof(RefundRequest.UpdatedAt)} ) " +
                 $"on conflict on constraint {RefundRequest.PrimaryKey} do update set " +
+                $"  {RefundRequest.OpkcRefundRequestIdCol} = @{nameof(RefundRequest.OpkcRefundRequestId)}, " +
                 $"  {RefundRequest.TrxIdCol} = @{nameof(RefundRequest.TrxId)}, " +
-                $"  {RefundRequest.TerminalGroupUocIdCol} = @{nameof(RefundRequest.TerminalGroupUocId)} ";
+                $"  {RefundRequest.TerminalGroupUocIdCol} = @{nameof(RefundRequest.TerminalGroupUocId)}, " +
+                $"  {RefundRequest.TerminalIdCol} = @{nameof(RefundRequest.TerminalId)}, " +
+                $"  {RefundRequest.UpdatedAtCol} = @{nameof(RefundRequest.UpdatedAt)} ";
 
             using (var connection = await dbContextFactory.CreateAndOpenAsync())
             {
