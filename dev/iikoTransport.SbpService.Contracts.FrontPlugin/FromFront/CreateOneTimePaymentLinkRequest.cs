@@ -72,14 +72,14 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
 
         /// <summary>
         /// Ширина изображения.
-        /// Default: 300
+        /// <remarks>Default: 300</remarks>
         /// </summary>
         [DataMember(IsRequired = false)]
         public int? Width { get; }
 
         /// <summary>
         /// Высота изображения.
-        /// Default: 300
+        /// <remarks>Default: 300</remarks>
         /// </summary>
         [DataMember(IsRequired = false)]
         public int? Height { get; }
