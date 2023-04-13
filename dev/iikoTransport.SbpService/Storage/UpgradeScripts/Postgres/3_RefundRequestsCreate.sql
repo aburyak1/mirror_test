@@ -8,3 +8,6 @@ create table if not exists refund_requests
     updated_at timestamp not null,
     constraint refund_requests_pkey primary key (id)
 );
+
+create index if not exists refund_requests_pkc_refund_request_index
+    on refund_requests (opkc_refund_request_id);

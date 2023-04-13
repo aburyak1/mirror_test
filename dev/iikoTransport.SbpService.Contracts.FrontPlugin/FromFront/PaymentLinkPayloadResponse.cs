@@ -6,7 +6,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
     /// Payment link payload.
     /// </summary>
     [DataContract]
-    public class PaymentLinkPayloadResponse: SbpNspkBaseResponse<QrcPayload>
+    public class PaymentLinkPayloadResponse : SbpNspkBaseResponse<QrcPayload>
     {
         public PaymentLinkPayloadResponse(string code, string message, QrcPayload? data)
             : base(code, message, data)

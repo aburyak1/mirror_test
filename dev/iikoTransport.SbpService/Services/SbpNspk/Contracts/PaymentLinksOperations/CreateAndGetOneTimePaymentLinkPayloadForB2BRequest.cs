@@ -13,7 +13,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperat
             int? qrTtl, string paymentPurpose, bool takeTax, string? totalTaxAmount)
         {
             if (takeTax && string.IsNullOrWhiteSpace(totalTaxAmount))
-                throw new NullReferenceException(nameof(totalTaxAmount));
+                throw new ArgumentException($"{nameof(totalTaxAmount)} must be set when {nameof(takeTax)} is true. ", nameof(totalTaxAmount));
             
             AgentId = agentId ?? throw new ArgumentNullException(nameof(agentId));
             MemberId = memberId ?? throw new ArgumentNullException(nameof(memberId));

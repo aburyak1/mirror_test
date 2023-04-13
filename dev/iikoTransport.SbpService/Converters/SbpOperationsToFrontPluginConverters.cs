@@ -120,7 +120,6 @@ namespace iikoTransport.SbpService.Converters.FrontPlugin
                 source.Kzo);
         }
 
-
         private static Front.GetRefundStatusData Convert(this Sbp.RefundRequestStatusV2Response source)
         {
             return new Front.GetRefundStatusData(

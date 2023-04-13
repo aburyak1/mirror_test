@@ -12,10 +12,13 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
         public CreateReusablePaymentLinkRequest(string paymentPurpose, bool takeTax, string? amount, string? totalTaxAmount = null,
             string? mediaType = null, int? width = null, int? height = null)
         {
-            if (takeTax && string.IsNullOrWhiteSpace(totalTaxAmount))
-                throw new ArgumentNullException(nameof(totalTaxAmount));
-            if (takeTax && string.IsNullOrWhiteSpace(amount))
-                throw new ArgumentNullException(nameof(amount));
+            if (takeTax)
+            {
+                if (string.IsNullOrWhiteSpace(totalTaxAmount))
+                    throw new ArgumentException($"{nameof(totalTaxAmount)} must be set when {nameof(takeTax)} is true. ", nameof(totalTaxAmount));
+                if (string.IsNullOrWhiteSpace(amount))
+                    throw new ArgumentException($"{nameof(amount)} must be set when {nameof(takeTax)} is true. ", nameof(amount));
+            }
 
             PaymentPurpose = paymentPurpose ?? throw new ArgumentNullException(nameof(paymentPurpose));
             TakeTax = takeTax;

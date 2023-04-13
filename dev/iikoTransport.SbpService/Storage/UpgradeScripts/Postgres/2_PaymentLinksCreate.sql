@@ -8,3 +8,6 @@ create table if not exists payment_links
     updated_at timestamp not null,
     constraint payment_links_pkey primary key (id)
 );
+
+create index if not exists payment_links_qrc_index
+    on payment_links (qrc_id);

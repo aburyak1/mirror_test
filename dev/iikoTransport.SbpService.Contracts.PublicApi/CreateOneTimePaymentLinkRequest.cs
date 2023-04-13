@@ -13,7 +13,7 @@ namespace iikoTransport.SbpService.Contracts.PublicApi
             string? totalTaxAmount = null, int? qrTtl = null, string? mediaType = null, int? width = null, int? height = null)
         {
             if (takeTax && string.IsNullOrWhiteSpace(totalTaxAmount))
-                throw new NullReferenceException(nameof(totalTaxAmount));
+                throw new ArgumentException($"{nameof(totalTaxAmount)} must be set when {nameof(takeTax)} is true. ", nameof(totalTaxAmount));
 
             OrganizationId = organizationId;
             TerminalGroupId = terminalGroupId;

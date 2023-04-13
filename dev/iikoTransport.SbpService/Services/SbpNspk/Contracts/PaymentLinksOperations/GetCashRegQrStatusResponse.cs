@@ -12,7 +12,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperat
         public GetCashRegQrStatusResponse(string status, string? paramsId)
         {
             Status = status ?? throw new ArgumentNullException(nameof(status));
-            ParamsId = paramsId ?? throw new ArgumentNullException(nameof(paramsId));
+            ParamsId = paramsId;
         }
 
         /// <summary>

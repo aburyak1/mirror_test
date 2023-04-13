@@ -2,6 +2,7 @@
 using iikoTransport.SbpService.Storage.Contracts.Entities;
 using PA = iikoTransport.SbpService.Contracts.PublicApi;
 using Sbp = iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperations;
+using SbpMerchants = iikoTransport.SbpService.Services.SbpNspk.Contracts.Merchants;
 
 namespace iikoTransport.SbpService.Converters.PublicApi
 {
@@ -62,7 +63,7 @@ namespace iikoTransport.SbpService.Converters.PublicApi
             return new PA.SetNewAccountResponse(source.Code, source.Message, source.Data?.Convert());
         }
 
-        public static PA.SearchMerchantDataResponse Convert(this Sbp.SbpNspkResponse<iikoTransport.SbpService.Services.SbpNspk.Contracts.Merchants.SearchMerchantDataResponse> source)
+        public static PA.SearchMerchantDataResponse Convert(this Sbp.SbpNspkResponse<SbpMerchants.SearchMerchantDataResponse> source)
         {
             return new PA.SearchMerchantDataResponse(source.Code, source.Message, source.Data?.Convert());
         }
@@ -113,14 +114,14 @@ namespace iikoTransport.SbpService.Converters.PublicApi
             return new PA.Image(source.MediaType, source.Content);
         }
 
-        private static PA.SearchMerchantData Convert(this iikoTransport.SbpService.Services.SbpNspk.Contracts.Merchants.SearchMerchantDataResponse source)
+        private static PA.SearchMerchantData Convert(this SbpMerchants.SearchMerchantDataResponse source)
         {
             return new PA.SearchMerchantData(
                 source.LegalName,
                 source.Members?.Select(member => member.Convert()).ToArray());
         }
 
-        private static PA.Member Convert(this iikoTransport.SbpService.Services.SbpNspk.Contracts.Merchants.Member source)
+        private static PA.Member Convert(this SbpMerchants.Member source)
         {
             return new PA.Member(
                 source.MemberId,
@@ -128,7 +129,7 @@ namespace iikoTransport.SbpService.Converters.PublicApi
                 source.Merchants?.Select(merchant => merchant.Convert()).ToArray());
         }
 
-        private static PA.Merchant Convert(this iikoTransport.SbpService.Services.SbpNspk.Contracts.Merchants.Merchant source)
+        private static PA.Merchant Convert(this SbpMerchants.Merchant source)
         {
             return new PA.Merchant(
                 source.MerchantId,

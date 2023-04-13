@@ -6,7 +6,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
     /// Deactivate cash register QR response.
     /// </summary>
     [DataContract]
-    public class DeactivateCashRegisterQrResponse: SbpNspkBaseResponse<object>
+    public class DeactivateCashRegisterQrResponse : SbpNspkBaseResponse<object>
     {
         public DeactivateCashRegisterQrResponse(string code, string message, object? data)
             : base(code, message, data)

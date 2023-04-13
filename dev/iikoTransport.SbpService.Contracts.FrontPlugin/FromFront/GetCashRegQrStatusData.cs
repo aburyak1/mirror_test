@@ -27,7 +27,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
         /// <summary>
         /// Идентификатор активного набора параметров.
         /// </summary>
-        [DataMember(IsRequired = true)]
+        [DataMember(IsRequired = false)]
         public string? ParamsId { get; }
     }
 }

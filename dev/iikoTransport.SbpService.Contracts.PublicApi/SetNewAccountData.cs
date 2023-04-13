@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Contracts.PublicApi
 {
@@ -10,9 +11,9 @@ namespace iikoTransport.SbpService.Contracts.PublicApi
     {
         public SetNewAccountData(string qrcId, string status, string account)
         {
-            QrcId = qrcId;
-            Status = status;
-            Account = account;
+            QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
+            Status = status ?? throw new ArgumentNullException(nameof(status));
+            Account = account ?? throw new ArgumentNullException(nameof(account));
         }
 
         /// <summary>

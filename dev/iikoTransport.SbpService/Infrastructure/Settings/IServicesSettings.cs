@@ -8,7 +8,7 @@ namespace iikoTransport.SbpService.Infrastructure.Settings
     public interface IServicesSettings
     {
         /// <summary>
-        /// Адрес DictionariesService 
+        /// Адрес DictionariesService.
         /// </summary>
         string DictionariesServiceAddress { get; }
 

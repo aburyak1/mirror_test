@@ -97,19 +97,19 @@ namespace iikoTransport.SbpService.Services.SbpNspk
             if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
 
             var uriDetails = ConcatMediaType(string.Format(GetQrcPayloadPath, qrcId), mediaType, width, height);
-            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, null);
+            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails);
         }
 
         /// <summary>
-        /// Запрос статуса Операций СБП по идентификатору QR Dynamic (v2)
+        /// Запрос статуса Операций СБП по идентификатору QR Dynamic (v2).
         /// </summary>
         public async Task<SbpNspkResponse<GetStatusQRCOperationsResponse[]>> GetStatusQRCOperations(Guid correlationId,
             GetStatusQRCOperationsRequest request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            var uriDetails = string.Format(GetStatusQrcOperationsPath);
-            return await CallSpbNspkMethod<SbpNspkResponse<GetStatusQRCOperationsResponse[]>>(correlationId, uriDetails, request, HttpMethod.Put);
+            return await CallSpbNspkMethod<SbpNspkResponse<GetStatusQRCOperationsResponse[]>>(correlationId, GetStatusQrcOperationsPath, request,
+                HttpMethod.Put);
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
             if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
 
             var uriDetails = string.Format(GetCashRegQrStatusPath, qrcId);
-            return await CallSpbNspkMethod<SbpNspkResponse<GetCashRegQrStatusResponse>>(correlationId, uriDetails, null);
+            return await CallSpbNspkMethod<SbpNspkResponse<GetCashRegQrStatusResponse>>(correlationId, uriDetails);
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
             if (qrcId == null) throw new ArgumentNullException(nameof(qrcId));
 
             var uriDetails = string.Format(StatusCashRegQrPath, qrcId, paramsId);
-            return await CallSpbNspkMethod<SbpNspkResponse<StatusCashRegQrResponse>>(correlationId, uriDetails, null);
+            return await CallSpbNspkMethod<SbpNspkResponse<StatusCashRegQrResponse>>(correlationId, uriDetails);
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
             if (agentRefundRequestId == null) throw new ArgumentNullException(nameof(agentRefundRequestId));
 
             var uriDetails = string.Format(GetRefundIdRequestPath, trxId, agentRefundRequestId);
-            return await CallSpbNspkMethod<SbpNspkResponse<CreatedRefundResponse>>(correlationId, uriDetails, null);
+            return await CallSpbNspkMethod<SbpNspkResponse<CreatedRefundResponse>>(correlationId, uriDetails);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
             if (opkcRefundRequestId == null) throw new ArgumentNullException(nameof(opkcRefundRequestId));
 
             var uriDetails = string.Format(RefundRequestStatusV2Path, originalTrxId, opkcRefundRequestId);
-            return await CallSpbNspkMethod<SbpNspkResponse<RefundRequestStatusV2Response>>(correlationId, uriDetails, null);
+            return await CallSpbNspkMethod<SbpNspkResponse<RefundRequestStatusV2Response>>(correlationId, uriDetails);
         }
 
         /// <summary>

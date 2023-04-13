@@ -264,8 +264,8 @@ namespace iikoTransport.SbpService.Services
             var refundRequest = new RefundRequest(Guid.NewGuid(), sbpResponse.Data.OpkcRefundRequestId, trxId, terminalGroupUocId, terminalId,
                 DateTime.UtcNow);
             await refundRequestsStorage.Upsert(refundRequest);
-            log.Info(
-                $"Refund request saved with id={refundRequest.OpkcRefundRequestId} for merchant={merchantId} from uocTerminalGroup={terminalGroupUocId}. ");
+            log.Info($"Refund request saved with id={refundRequest.OpkcRefundRequestId} " +
+                     $"for merchant={merchantId} from uocTerminalGroup={terminalGroupUocId}. ");
         }
     }
 }

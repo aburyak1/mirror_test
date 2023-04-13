@@ -12,12 +12,14 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperat
         public CreateAndGetReusablePaymentLinkPayloadForB2BRequest(string agentId, string memberId, string account, string merchantId, string? amount,
             string paymentPurpose, bool takeTax, string? totalTaxAmount)
         {
-            if (takeTax && string.IsNullOrWhiteSpace(totalTaxAmount))
-                throw new ArgumentNullException(nameof(totalTaxAmount));
-            
-            if(takeTax && string.IsNullOrWhiteSpace(amount))
-                throw new ArgumentNullException(nameof(amount));
-            
+            if (takeTax)
+            {
+                if (string.IsNullOrWhiteSpace(totalTaxAmount))
+                    throw new ArgumentException($"{nameof(totalTaxAmount)} must be set when {nameof(takeTax)} is true. ", nameof(totalTaxAmount));
+                if (string.IsNullOrWhiteSpace(amount))
+                    throw new ArgumentException($"{nameof(amount)} must be set when {nameof(takeTax)} is true. ", nameof(amount));
+            }
+
             AgentId = agentId ?? throw new ArgumentNullException(nameof(agentId));
             MemberId = memberId ?? throw new ArgumentNullException(nameof(memberId));
             Account = account ?? throw new ArgumentNullException(nameof(account));

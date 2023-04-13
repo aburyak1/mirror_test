@@ -6,7 +6,7 @@ namespace iikoTransport.SbpService.Contracts.PublicApi
     /// Get refund id response.
     /// </summary>
     [DataContract]
-    public class GetRefundIdResponse: SbpNspkBaseResponse<CreatedRefundData>
+    public class GetRefundIdResponse : SbpNspkBaseResponse<CreatedRefundData>
     {
         public GetRefundIdResponse(string code, string message, CreatedRefundData? data)
             : base(code, message, data)

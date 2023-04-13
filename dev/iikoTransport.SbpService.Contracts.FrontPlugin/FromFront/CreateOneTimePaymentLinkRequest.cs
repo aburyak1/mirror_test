@@ -13,7 +13,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
             string? mediaType = null, int? width = null, int? height = null)
         {
             if (takeTax && string.IsNullOrWhiteSpace(totalTaxAmount))
-                throw new NullReferenceException(nameof(totalTaxAmount));
+                throw new ArgumentException($"{nameof(totalTaxAmount)} must be set when {nameof(takeTax)} is true. ", nameof(totalTaxAmount));
             
             Amount = amount;
             PaymentPurpose = paymentPurpose ?? throw new ArgumentNullException(nameof(paymentPurpose));

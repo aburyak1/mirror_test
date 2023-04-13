@@ -25,16 +25,14 @@ namespace iikoTransport.SbpService.Services
         private readonly SbpNspkClient sbpClient;
         private readonly IDictionariesServiceClient dictionariesClient;
         private readonly IMethodCallSettingsFactory callSettingsFactory;
-        private readonly ILog log;
 
         public PublicApiSbpService(ISbpSettingsStorage settingsStorage, SbpNspkClient sbpClient, IDictionariesServiceClient dictionariesClient,
-            IMethodCallSettingsFactory callSettingsFactory, ILog log)
+            IMethodCallSettingsFactory callSettingsFactory)
         {
             this.settingsStorage = settingsStorage ?? throw new ArgumentNullException(nameof(settingsStorage));
             this.sbpClient = sbpClient ?? throw new ArgumentNullException(nameof(sbpClient));
             this.dictionariesClient = dictionariesClient ?? throw new ArgumentNullException(nameof(dictionariesClient));
             this.callSettingsFactory = callSettingsFactory ?? throw new ArgumentNullException(nameof(callSettingsFactory));
-            this.log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
         /// <inheritdoc />

@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperations
 {
@@ -10,9 +11,9 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperat
     {
         public SetNewAccountResponse(string qrcId, string status, string account)
         {
-            QrcId = qrcId;
-            Status = status;
-            Account = account;
+            QrcId = qrcId ?? throw new ArgumentNullException(nameof(qrcId));
+            Status = status ?? throw new ArgumentNullException(nameof(status));
+            Account = account ?? throw new ArgumentNullException(nameof(account));
         }
 
         /// <summary>
