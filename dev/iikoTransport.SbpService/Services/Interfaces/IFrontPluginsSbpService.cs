@@ -25,6 +25,11 @@ namespace iikoTransport.SbpService.Services.Interfaces
         Task<PaymentLinkPayloadResponse> GetQrcPayload(Call<GetQrcPayloadRequest> call);
 
         /// <summary>
+        /// Запрос статуса Операций СБП по идентификаторам QR.
+        /// </summary>
+        Task<GetStatusQrcOperationsResponse> GetStatusQrcOperations(Call<GetStatusQrcOperationsRequest> call);
+
+        /// <summary>
         /// Получение идентификаторов для многоразовых ссылок СБП.
         /// </summary>
         Task<CreateQrcIdReservationResponse> CreateQrcIdReservation(Call<CreateQrcIdReservationRequest> call);
@@ -45,9 +50,14 @@ namespace iikoTransport.SbpService.Services.Interfaces
         Task<DeactivateCashRegisterQrResponse> DeactivateCashRegisterQr(Call<DeactivateCashRegisterQrRequest> call);
 
         /// <summary>
-        /// Запрос статуса Операций СБП по идентификаторам QR.
+        /// Запрос статуса Кассовой ссылки СБП.
         /// </summary>
-        Task<GetStatusQrcOperationsResponse> GetStatusQrcOperations(Call<GetStatusQRCOperationsRequest> call);
+        Task<GetCashRegQrStatusResponse> GetCashRegQrStatus(Call<GetCashRegQrStatusRequest> call);
+
+        /// <summary>
+        /// Статус Операции по Кассовой ссылке СБП.
+        /// </summary>
+        Task<GetStatusCashRegQrOperationResponse> GetStatusCashRegQrOperation(Call<GetStatusCashRegQrOperationRequest> call);
 
         /// <summary>
         /// Запрос Агента ТСП на возврат по Операции СБП C2B.

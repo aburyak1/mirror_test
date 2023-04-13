@@ -24,7 +24,7 @@ namespace iikoTransport.SbpService.FrontClient
             expirationMs = (int) options.Expiration.TotalMilliseconds;
         }
 
-        public async Task CallFrontPluginMethod(string methodUri, object bodyJson, Guid terminalGroupUocId, int pluginModuleId,
+        public async Task CallFrontPluginMethod(string methodUri, object bodyJson, Guid terminalGroupUocId, Guid? terminalId, int pluginModuleId,
             MethodCallSettings callSettings)
         {
             if (string.IsNullOrWhiteSpace(methodUri)) throw new ArgumentNullException(methodUri);
@@ -35,6 +35,11 @@ namespace iikoTransport.SbpService.FrontClient
                 { TransportConstants.Headers.LicenseModuleId, pluginModuleId.ToString() },
                 { TransportConstants.Headers.IsCloudCall, true.ToString() }
             };
+            if (terminalId.HasValue)
+            {
+                headers.Add(TransportConstants.Headers.TerminalId, terminalId.Value.ToString());
+            }
+
             var pluginRequest = new RequestToExternalSystem(ExternalSystemType.Front, terminalGroupUocId.ToString(), methodUri, expirationMs,
                 bodyJson, headers);
             await RunOnExternalSystem(pluginRequest, callSettings);

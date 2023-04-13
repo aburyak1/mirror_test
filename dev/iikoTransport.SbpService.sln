@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iikoTransport.SbpService.Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iikoTransport.SbpService.Contracts.FrontPlugin", "iikoTransport.SbpService.Contracts.FrontPlugin\iikoTransport.SbpService.Contracts.FrontPlugin.csproj", "{47961BF8-22B6-43DB-8C25-92A1391A4FBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iikoTransport.SbpService.Client.PublicApi", "iikoTransport.SbpService.Client.PublicApi\iikoTransport.SbpService.Client.PublicApi.csproj", "{65B91DFB-26E5-4491-A57B-3C40B7BCEB14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iikoTransport.SbpService.Contracts.PublicApi", "iikoTransport.SbpService.Contracts.PublicApi\iikoTransport.SbpService.Contracts.PublicApi.csproj", "{7AC44784-177E-4FA7-92B0-0931D3AB2A7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{47961BF8-22B6-43DB-8C25-92A1391A4FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47961BF8-22B6-43DB-8C25-92A1391A4FBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47961BF8-22B6-43DB-8C25-92A1391A4FBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65B91DFB-26E5-4491-A57B-3C40B7BCEB14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65B91DFB-26E5-4491-A57B-3C40B7BCEB14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65B91DFB-26E5-4491-A57B-3C40B7BCEB14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65B91DFB-26E5-4491-A57B-3C40B7BCEB14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AC44784-177E-4FA7-92B0-0931D3AB2A7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AC44784-177E-4FA7-92B0-0931D3AB2A7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AC44784-177E-4FA7-92B0-0931D3AB2A7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AC44784-177E-4FA7-92B0-0931D3AB2A7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

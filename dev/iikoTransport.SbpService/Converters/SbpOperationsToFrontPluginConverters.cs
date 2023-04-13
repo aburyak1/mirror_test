@@ -3,7 +3,7 @@ using iikoTransport.SbpService.Storage.Contracts.Entities;
 using Front = iikoTransport.SbpService.Contracts.FrontPlugin.FromFront;
 using Sbp = iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperations;
 
-namespace iikoTransport.SbpService.Converters
+namespace iikoTransport.SbpService.Converters.FrontPlugin
 {
     /// <summary>
     /// Converters from sbp.nspk contracts to front plugin contracts.
@@ -24,8 +24,10 @@ namespace iikoTransport.SbpService.Converters
                 settings.Account,
                 settings.MerchantId,
                 source.Amount.ToString(),
+                source.QrTtl,
                 source.PaymentPurpose,
-                source.TakeTax);
+                source.TakeTax,
+                source.TotalTaxAmount);
         }
 
         public static Sbp.CreateAndGetReusablePaymentLinkPayloadForB2BRequest Convert(
@@ -36,8 +38,15 @@ namespace iikoTransport.SbpService.Converters
                 settings.MemberId,
                 settings.Account,
                 settings.MerchantId,
+                source.Amount,
                 source.PaymentPurpose,
-                source.TakeTax);
+                source.TakeTax,
+                source.TotalTaxAmount);
+        }
+
+        public static Front.GetStatusQrcOperationsResponse Convert(this Sbp.SbpNspkResponse<Sbp.GetStatusQRCOperationsResponse[]> source)
+        {
+            return new Front.GetStatusQrcOperationsResponse(source.Code, source.Message, source.Data?.Select(data => data.Convert()).ToArray());
         }
 
         public static Front.CreateQrcIdReservationResponse Convert(this Sbp.SbpNspkResponse<Sbp.CreateQrcIdReservationV1Response> source)
@@ -60,9 +69,14 @@ namespace iikoTransport.SbpService.Converters
             return new Front.ActivateCashRegisterQrResponse(source.Code, source.Message, source.Data?.Convert());
         }
 
-        public static Front.GetStatusQrcOperationsResponse Convert(this Sbp.SbpNspkResponse<Sbp.GetStatusQRCOperationsResponse[]> source)
+        public static Front.GetCashRegQrStatusResponse Convert(this Sbp.SbpNspkResponse<Sbp.GetCashRegQrStatusResponse> source)
         {
-            return new Front.GetStatusQrcOperationsResponse(source.Code, source.Message, source.Data?.Select(data => data.Convert()).ToArray());
+            return new Front.GetCashRegQrStatusResponse(source.Code, source.Message, source.Data?.Convert());
+        }
+
+        public static Front.GetStatusCashRegQrOperationResponse Convert(this Sbp.SbpNspkResponse<Sbp.StatusCashRegQrResponse> source)
+        {
+            return new Front.GetStatusCashRegQrOperationResponse(source.Code, source.Message, source.Data?.Convert());
         }
 
         public static Sbp.CreateRefundRequest Convert(this Front.CreateRefundRequest source, SbpSetting settings)
@@ -85,6 +99,25 @@ namespace iikoTransport.SbpService.Converters
         public static Front.GetRefundStatusResponse Convert(this Sbp.SbpNspkResponse<Sbp.RefundRequestStatusV2Response> source)
         {
             return new Front.GetRefundStatusResponse(source.Code, source.Message, source.Data?.Convert());
+        }
+
+        private static Front.GetCashRegQrStatusData Convert(this Sbp.GetCashRegQrStatusResponse source)
+        {
+            return new Front.GetCashRegQrStatusData(
+                source.Status,
+                source.ParamsId);
+        }
+
+        private static Front.GetStatusCashRegQrOperationData Convert(this Sbp.StatusCashRegQrResponse source)
+        {
+            return new Front.GetStatusCashRegQrOperationData(
+                source.CashRegisterQrcStatus,
+                source.TrxStatus,
+                source.TrxId,
+                source.Amount,
+                source.Timestamp,
+                source.PayerId,
+                source.Kzo);
         }
 
         private static Front.GetRefundStatusData Convert(this Sbp.RefundRequestStatusV2Response source)

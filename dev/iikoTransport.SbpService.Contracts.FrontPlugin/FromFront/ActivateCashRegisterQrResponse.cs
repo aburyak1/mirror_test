@@ -6,7 +6,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
     /// Activate cash register QR response.
     /// </summary>
     [DataContract]
-    public class ActivateCashRegisterQrResponse: SbpNspkBaseResponse<ActivateCashRegisterQrData>
+    public class ActivateCashRegisterQrResponse : SbpNspkBaseResponse<ActivateCashRegisterQrData>
     {
         public ActivateCashRegisterQrResponse(string code, string message, ActivateCashRegisterQrData? data)
             : base(code, message, data)

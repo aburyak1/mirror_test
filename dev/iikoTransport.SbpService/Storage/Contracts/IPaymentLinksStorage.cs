@@ -9,7 +9,7 @@ namespace iikoTransport.SbpService.Storage.Contracts
         /// <summary>
         /// Get PaymentLink.
         /// </summary>
-        Task<PaymentLink> Get(string qrcId, CancellationToken cancellationToken = default);
+        Task<PaymentLink> Get(string qrcId, string? paramsId = null, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Save or insert PaymentLink.
