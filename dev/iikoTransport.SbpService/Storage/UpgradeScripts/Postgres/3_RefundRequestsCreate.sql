@@ -9,5 +9,5 @@ create table if not exists refund_requests
     constraint refund_requests_pkey primary key (id)
 );
 
-create index if not exists refund_requests_pkc_refund_request_index
+create index if not exists refund_requests_opkc_index
     on refund_requests (opkc_refund_request_id);

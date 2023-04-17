@@ -5,7 +5,7 @@
     <Copyright>Copyright © iiko</Copyright>
     <Description>Клиентская библиотека, предоставляемая SbpService для PublicApi.</Description>
     <PackageTags>iiko-transport sbp-service client publicapi-service</PackageTags>
-    <Version>8.5.2.1-trn1989v04</Version>
+    <Version>8.5.2.2</Version>
     <FileVersion>$(Version)</FileVersion>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
