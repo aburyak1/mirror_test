@@ -5,7 +5,7 @@
     <Copyright>Copyright © iiko</Copyright>
     <Description>Библиотека контрактов, предоставляемая SbpService для PublicApi.</Description>
     <PackageTags>iiko-transport sbp service contracts publicapi</PackageTags>
-    <Version>8.5.2.1-trn1989v06</Version>
+    <Version>8.5.2.2</Version>
     <FileVersion>$(Version)</FileVersion>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
