@@ -9,39 +9,15 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
     [DataContract]
     public class CreateReusablePaymentLinkRequest
     {
-        public CreateReusablePaymentLinkRequest(string paymentPurpose, bool takeTax, string? amount, string? totalTaxAmount = null,
+        public CreateReusablePaymentLinkRequest(string? amount, string? paymentPurpose, 
             string? mediaType = null, int? width = null, int? height = null)
         {
-            if (takeTax)
-            {
-                if (string.IsNullOrWhiteSpace(totalTaxAmount))
-                    throw new ArgumentException($"{nameof(totalTaxAmount)} must be set when {nameof(takeTax)} is true. ", nameof(totalTaxAmount));
-                if (string.IsNullOrWhiteSpace(amount))
-                    throw new ArgumentException($"{nameof(amount)} must be set when {nameof(takeTax)} is true. ", nameof(amount));
-            }
-
-            PaymentPurpose = paymentPurpose ?? throw new ArgumentNullException(nameof(paymentPurpose));
-            TakeTax = takeTax;
             Amount = amount;
-            TotalTaxAmount = totalTaxAmount;
+            PaymentPurpose = paymentPurpose;
             MediaType = mediaType;
             Width = width;
             Height = height;
         }
-
-        /// <summary>
-        /// Назначение платежа.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public string PaymentPurpose { get; }
-
-        /// <summary>
-        /// Информация о взимании НДС. Допустимые значения:
-        /// true – облагается НДС;
-        /// false – не облагается НДС.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public bool TakeTax { get; }
 
         /// <summary>
         /// Сумма Операции СБП C2B в копейках. Целое, положительное число. Валюта Операции СБП - рубли РФ.
@@ -50,13 +26,10 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
         public string? Amount { get; }
 
         /// <summary>
-        /// Сумма НДС в копейках. Валюта НДС - рубли РФ. Условия заполнения в зависимости от значения поля takeTax:
-        /// takeTax=FALSE: totalTaxAmount должно отсутствовать;
-        /// takeTax=TRUE: Сумма НДС должна быть указана в параметре totalTaxAmount.
-        /// При заполненном поле totalTaxAmount, поле amount также должно быть заполнено.
+        /// Назначение платежа.
         /// </summary>
-        [DataMember(IsRequired = true)]
-        public string? TotalTaxAmount { get; }
+        [DataMember(IsRequired = false)]
+        public string? PaymentPurpose { get; }
 
         /// <summary>
         /// Опциональное получение QR-кода для Функциональной ссылки СБП.

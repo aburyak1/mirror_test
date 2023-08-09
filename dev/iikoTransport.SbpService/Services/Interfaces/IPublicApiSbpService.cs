@@ -48,5 +48,10 @@ namespace iikoTransport.SbpService.Services.Interfaces
         /// Получение списка ТСП, зарегистрированных для ЮЛ или ИП. 
         /// </summary>
         Task<SearchMerchantDataResponse> SearchMerchantData(Call<SearchMerchantDataRequest> call);
+
+        /// <summary>
+        /// Запрос данных ТСП.
+        /// </summary>
+        Task<GetMerchantDataResponse> GetMerchantData(Call<GetMerchantDataRequest> call);
     }
 }

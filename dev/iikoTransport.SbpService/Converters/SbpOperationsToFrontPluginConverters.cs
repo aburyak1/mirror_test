@@ -15,33 +15,32 @@ namespace iikoTransport.SbpService.Converters.FrontPlugin
             return new Front.PaymentLinkPayloadResponse(source.Code, source.Message, source.Data?.Convert());
         }
 
-        public static Sbp.CreateAndGetOneTimePaymentLinkPayloadForB2BRequest Convert(
+        public static Sbp.CreateQRCRequest Convert(
             this Front.CreateOneTimePaymentLinkRequest source, SbpSetting settings, string agentId)
         {
-            return new Sbp.CreateAndGetOneTimePaymentLinkPayloadForB2BRequest(
+            return new Sbp.CreateQRCRequest(
                 agentId,
                 settings.MemberId,
                 settings.Account,
                 settings.MerchantId,
-                source.Amount.ToString(),
+                "02",
+                source.Amount,
                 source.QrTtl,
-                source.PaymentPurpose,
-                source.TakeTax,
-                source.TotalTaxAmount);
+                source.PaymentPurpose);
         }
 
-        public static Sbp.CreateAndGetReusablePaymentLinkPayloadForB2BRequest Convert(
+        public static Sbp.CreateQRCRequest Convert(
             this Front.CreateReusablePaymentLinkRequest source, SbpSetting settings, string agentId)
         {
-            return new Sbp.CreateAndGetReusablePaymentLinkPayloadForB2BRequest(
+            return new Sbp.CreateQRCRequest(
                 agentId,
                 settings.MemberId,
                 settings.Account,
                 settings.MerchantId,
+                "01",
                 source.Amount,
-                source.PaymentPurpose,
-                source.TakeTax,
-                source.TotalTaxAmount);
+                null,
+                source.PaymentPurpose);
         }
 
         public static Front.GetStatusQrcOperationsResponse Convert(this Sbp.SbpNspkResponse<Sbp.GetStatusQRCOperationsResponse[]> source)

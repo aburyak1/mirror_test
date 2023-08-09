@@ -5,7 +5,7 @@
     <Copyright>Copyright © iiko</Copyright>
     <Description>Библиотека контрактов, предоставляемых сервисом SbpService для фронтовых плагинов.</Description>
     <PackageTags>iiko-transport sbp service contracts frontplugin nuget-source-common</PackageTags>
-    <Version>8.5.2.2</Version>
+    <Version>8.6.3.1-trn2150v01</Version>
     <FileVersion>$(Version)</FileVersion>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>

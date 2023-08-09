@@ -7,7 +7,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperat
     public class QrcPayloadResponse
     {
         /// <summary>
-        /// Данные регистрируемой одноразовой Фукциональной ссылки СБП для B2B.
+        /// Данные регистрируемой Фукциональной ссылки СБП.
         /// </summary>
         public QrcPayloadResponse(string qrcId, string payload, string status, Image? image)
         {
@@ -18,19 +18,19 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperat
         }
 
         /// <summary>
-        /// Идентификатор зарегистрированной ссылки СБП.
+        /// Идентификатор зарегистрированной Платежной или Информационной ссылки СБП.
         /// </summary>
         [DataMember(IsRequired = true)]
         public string QrcId { get; }
 
         /// <summary>
-        /// Payload зарегистрированной Платежной или Информационной или Кассовой ссылки СБП.
+        /// Payload зарегистрированной Платежной или Информационной ссылки СБП.
         /// </summary>
         [DataMember(IsRequired = true)]
         public string Payload { get; }
         
         /// <summary>
-        /// Статус регистрации Платежной или Информационной или Кассовой ссылки СБП.
+        /// Статус регистрации Платежной или Информационной ссылки СБП.
         /// </summary>
         /// <remarks>Value:"CREATED"</remarks>
         [DataMember(IsRequired = true)]

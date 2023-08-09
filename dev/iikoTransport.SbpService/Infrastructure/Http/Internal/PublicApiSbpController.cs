@@ -92,5 +92,14 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         {
             return await publicApiSbpService.SearchMerchantData(HttpContext.CreateCall(request));
         }
+
+        /// <summary>
+        /// Запрос данных ТСП.
+        /// </summary>
+        [HttpPost]
+        public async Task<GetMerchantDataResponse> GetMerchantData([FromBody] GetMerchantDataRequest request)
+        {
+            return await publicApiSbpService.GetMerchantData(HttpContext.CreateCall(request));
+        }
     }
 }
