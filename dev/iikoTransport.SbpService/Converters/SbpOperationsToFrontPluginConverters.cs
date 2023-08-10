@@ -61,8 +61,8 @@ namespace iikoTransport.SbpService.Converters.FrontPlugin
             return new Sbp.CreateCashRegisterQrRequest(
                 agentId,
                 settings.MemberId,
-                settings.Account,
                 settings.MerchantId,
+                settings.Account,
                 source.QrcId);
         }
 

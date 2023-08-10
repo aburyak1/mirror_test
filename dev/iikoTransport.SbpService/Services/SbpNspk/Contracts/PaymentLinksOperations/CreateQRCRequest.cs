@@ -19,7 +19,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperat
             TemplateVersion = "01";
             QrcType = qrcType;
             Amount = amount;
-            Currency = "RUB";
+            Currency = string.IsNullOrEmpty(Amount) ? null : "RUB";
             QrTtl = qrTtl;
             PaymentPurpose = paymentPurpose;
         }
