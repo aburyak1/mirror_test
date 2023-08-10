@@ -22,7 +22,7 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         }
         
         /// <summary>
-        /// Регистрация одноразовой Функциональной ссылки СБП для B2B.
+        /// Регистрация одноразовой Функциональной ссылки СБП.
         /// </summary>
         [HttpPost]
         public async Task<PaymentLinkPayloadResponse> CreateOneTimePaymentLink([FromBody] CreateOneTimePaymentLinkRequest request)
@@ -31,7 +31,7 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         }
 
         /// <summary>
-        /// Регистрация многоразовой Функциональной ссылки СБП для B2B.
+        /// Регистрация многоразовой Функциональной ссылки СБП.
         /// </summary>
         [HttpPost]
         public async Task<PaymentLinkPayloadResponse> CreateReusablePaymentLink([FromBody] CreateReusablePaymentLinkRequest request)

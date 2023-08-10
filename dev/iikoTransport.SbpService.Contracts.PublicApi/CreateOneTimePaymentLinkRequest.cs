@@ -9,18 +9,13 @@ namespace iikoTransport.SbpService.Contracts.PublicApi
     [DataContract]
     public class CreateOneTimePaymentLinkRequest
     {
-        public CreateOneTimePaymentLinkRequest(Guid organizationId, Guid terminalGroupId, int amount, string paymentPurpose, bool takeTax,
-            string? totalTaxAmount = null, int? qrTtl = null, string? mediaType = null, int? width = null, int? height = null)
+        public CreateOneTimePaymentLinkRequest(Guid organizationId, Guid terminalGroupId, string amount, string? paymentPurpose, 
+            int? qrTtl = null, string? mediaType = null, int? width = null, int? height = null)
         {
-            if (takeTax && string.IsNullOrWhiteSpace(totalTaxAmount))
-                throw new ArgumentException($"{nameof(totalTaxAmount)} must be set when {nameof(takeTax)} is true. ", nameof(totalTaxAmount));
-
             OrganizationId = organizationId;
             TerminalGroupId = terminalGroupId;
-            Amount = amount;
-            PaymentPurpose = paymentPurpose ?? throw new ArgumentNullException(nameof(paymentPurpose));
-            TakeTax = takeTax;
-            TotalTaxAmount = totalTaxAmount;
+            Amount = amount ?? throw new ArgumentNullException(nameof(amount));
+            PaymentPurpose = paymentPurpose;
             QrTtl = qrTtl;
             MediaType = mediaType;
             Width = width;
@@ -43,29 +38,13 @@ namespace iikoTransport.SbpService.Contracts.PublicApi
         /// Сумма Операции СБП C2B в копейках. Целое, положительное число. Валюта Операции СБП - рубли РФ.
         /// </summary>
         [DataMember(IsRequired = true)]
-        public int Amount { get; }
+        public string Amount { get; }
 
         /// <summary>
         /// Назначение платежа.
         /// </summary>
-        [DataMember(IsRequired = true)]
-        public string PaymentPurpose { get; }
-
-        /// <summary>
-        /// Информация о взимании НДС. Допустимые значения:
-        /// true – облагается НДС;
-        /// false – не облагается НДС.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public bool TakeTax { get; }
-
-        /// <summary>
-        /// Сумма НДС в копейках. Валюта НДС - рубли РФ. Условия заполнения в зависимости от значения поля takeTax:
-        /// totalTaxAmount всегда отсутствует при takeTax=FALSE;
-        /// totalTaxAmount всегда присутствует при takeTax=TRUE. 
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public string? TotalTaxAmount { get; }
+        [DataMember(IsRequired = false)]
+        public string? PaymentPurpose { get; }
 
         /// <summary>
         /// Срок жизни Функциональной ссылки СБП B2B в минутах. Минимальное допустимое значение - 1.

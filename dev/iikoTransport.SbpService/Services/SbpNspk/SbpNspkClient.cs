@@ -9,6 +9,7 @@ using iikoTransport.Logging.Metrics;
 using iikoTransport.SbpService.Services.SbpNspk.Contracts.Merchants;
 using iikoTransport.SbpService.Services.SbpNspk.Contracts.PaymentLinksOperations;
 using iikoTransport.Utils;
+using Newtonsoft.Json;
 
 namespace iikoTransport.SbpService.Services.SbpNspk
 {
@@ -22,8 +23,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         private readonly HttpClient client;
         private readonly ILog log;
         private readonly string baseUri;
-        private const string CreateAndGetOneTimePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/one-time-use";
-        private const string CreateAndGetReusablePaymentLinkPayloadForB2BPath = "/payment/v1/b2b/payment-link/reusable";
+        private const string CreateQRCPath = "/payment/v1/qrc-data";
         private const string GetQrcPayloadPath = "/payment/v1/qrc-data/{0}/payload";
         private const string GetStatusQrcOperationsPath = "/payment/v2/qrc-status";
         private const string CreateQrcIdReservationV1Path = "/payment/v1/qrc-id-reservation?quantity={0}";
@@ -37,6 +37,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         private const string RefundRequestStatusV2Path = "/payment/v2/agent/refund/{0}/{1}";
         private const string SetNewAccountPath = "/payment/v1/cash-register-qrc/{0}";
         private const string SearchMerchantDataPath = "/merchant/v1/merchant/search?ogrn={0}&bic={1}";
+        private const string GetMerchantDataPath = "/merchant/v1/merchant/info/{0}";
 
         public SbpNspkClient(
             HttpClient httpClient,
@@ -60,26 +61,14 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         }
 
         /// <summary>
-        /// Регистрация одноразовой Функциональной ссылки СБП для B2B.
+        /// Регистрация Функциональной ссылки СБП. 
         /// </summary>
-        public async Task<SbpNspkResponse<QrcPayloadResponse>> CreateAndGetOneTimePaymentLinkPayloadForB2B(Guid correlationId,
-            CreateAndGetOneTimePaymentLinkPayloadForB2BRequest request, string? mediaType, int? width, int? height)
+        public async Task<SbpNspkResponse<QrcPayloadResponse>> CreateQRC(Guid correlationId,
+            CreateQRCRequest request, string? mediaType, int? width, int? height)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            var uriDetails = ConcatMediaType(CreateAndGetOneTimePaymentLinkPayloadForB2BPath, mediaType, width, height);
-            return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, request);
-        }
-
-        /// <summary>
-        /// Регистрация многоразовой Функциональной ссылки СБП для B2B.
-        /// </summary>
-        public async Task<SbpNspkResponse<QrcPayloadResponse>> CreateAndGetReusablePaymentLinkPayloadForB2B(Guid correlationId,
-            CreateAndGetReusablePaymentLinkPayloadForB2BRequest request, string? mediaType, int? width, int? height)
-        {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-
-            var uriDetails = ConcatMediaType(CreateAndGetReusablePaymentLinkPayloadForB2BPath, mediaType, width, height);
+            var uriDetails = ConcatMediaType(CreateQRCPath, mediaType, width, height);
             return await CallSpbNspkMethod<SbpNspkResponse<QrcPayloadResponse>>(correlationId, uriDetails, request);
         }
 
@@ -268,6 +257,44 @@ namespace iikoTransport.SbpService.Services.SbpNspk
         }
 
         /// <summary>
+        /// Запрос данных ТСП.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        /// <param name="merchantId">Идентификатор ТСП в СБП</param>
+        public async Task<SbpNspkResponse<GetMerchantDataResponse>> GetMerchantData(Guid correlationId, string merchantId)
+        {
+            if (merchantId == null) throw new ArgumentNullException(nameof(merchantId));
+
+            var uriDetails = string.Format(GetMerchantDataPath, merchantId);
+            return await CallSpbNspkMethod<SbpNspkResponse<GetMerchantDataResponse>>(correlationId, uriDetails);
+        }
+
+        /// <summary>
+        /// Вызывать тестовый метод api sbp.nspk для прохождения сертификации.
+        /// </summary>
+        /// <param name="fullUri"></param>
+        public async Task<string> CallSpbNspkTestMethod(string fullUri)
+        {
+            if (string.IsNullOrWhiteSpace(fullUri)) throw new ArgumentNullException(nameof(fullUri));
+
+            try
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, fullUri);
+                requestMessage.Headers.Add("Accept", "application/json");
+                requestMessage.Headers.Add("Accept-Charset", "UTF-8");
+                
+                var response = await client.SendAsync(requestMessage);
+                var responseString = await response.Content.ReadAsStringAsync();
+                return responseString;
+            }
+            catch (Exception exc)
+            {
+                log.Error("Sbp.Nspk api call error", exc);
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Вызывать метод api sbp.nspk и вернуть десериализованный результат.
         /// </summary>
         /// <param name="correlationId">Correlation Id.</param>
@@ -281,6 +308,7 @@ namespace iikoTransport.SbpService.Services.SbpNspk
 
             var uri = baseUri.Trim().TrimEnd('/') + uriDetails;
             bool success = false;
+            string? responseString = null;
             try
             {
                 var requestMessage = new HttpRequestMessage(httpMethod, uri);
@@ -294,10 +322,18 @@ namespace iikoTransport.SbpService.Services.SbpNspk
                 requestMessage.Headers.Add("Accept-Charset", "UTF-8");
                 
                 var response = await client.SendAsync(requestMessage);
-                var responseString = await response.Content.ReadAsStringAsync();
+                responseString = await response.Content.ReadAsStringAsync();
                 var result = responseString.FromJson<T>();
                 success = true;
                 return result;
+            }
+            catch (JsonReaderException exc)
+            {
+                if (!string.IsNullOrWhiteSpace(responseString))
+                {
+                    log.Error($"Sbp.Nspk api response parse error: UnableToParseJson '{responseString}'", exc);
+                }
+                throw;
             }
             catch (Exception exc)
             {

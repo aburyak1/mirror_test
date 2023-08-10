@@ -45,7 +45,7 @@ namespace iikoTransport.SbpService.Services
             var setting = await settingsStorage.Get(tgId, call.Context.CancellationToken);
             
             var requestToSbp = request.Convert(setting, sbpClient.AgentId);
-            var response = await sbpClient.CreateAndGetOneTimePaymentLinkPayloadForB2B(call.Context.CorrelationId, requestToSbp, request.MediaType,
+            var response = await sbpClient.CreateQRC(call.Context.CorrelationId, requestToSbp, request.MediaType,
                 request.Width, request.Height);
             
             return response.Convert();
@@ -119,6 +119,15 @@ namespace iikoTransport.SbpService.Services
             if (call == null) throw new ArgumentNullException(nameof(call));
 
             var response = await sbpClient.SearchMerchantData(call.Context.CorrelationId, call.Payload.Ogrn, call.Payload.Bic);
+            return response.Convert();
+        }
+
+        /// <inheritdoc />
+        public async Task<GetMerchantDataResponse> GetMerchantData(Call<GetMerchantDataRequest> call)
+        {
+            if (call == null) throw new ArgumentNullException(nameof(call));
+
+            var response = await sbpClient.GetMerchantData(call.Context.CorrelationId, call.Payload.MerchantId);
             return response.Convert();
         }
 

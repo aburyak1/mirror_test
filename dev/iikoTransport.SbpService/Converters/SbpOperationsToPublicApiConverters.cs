@@ -11,24 +11,25 @@ namespace iikoTransport.SbpService.Converters.PublicApi
     /// </summary>
     public static class SbpOperationsToPublicApiConverters
     {
+        private const string QrDynamicType = "02";
+        
         public static PA.PaymentLinkPayloadResponse Convert(this Sbp.SbpNspkResponse<Sbp.QrcPayloadResponse> source)
         {
             return new PA.PaymentLinkPayloadResponse(source.Code, source.Message, source.Data?.Convert());
         }
 
-        public static Sbp.CreateAndGetOneTimePaymentLinkPayloadForB2BRequest Convert(
+        public static Sbp.CreateQRCRequest Convert(
             this PA.CreateOneTimePaymentLinkRequest source, SbpSetting settings, string agentId)
         {
-            return new Sbp.CreateAndGetOneTimePaymentLinkPayloadForB2BRequest(
+            return new Sbp.CreateQRCRequest(
                 agentId,
                 settings.MemberId,
                 settings.Account,
                 settings.MerchantId,
-                source.Amount.ToString(),
+                QrDynamicType,
+                source.Amount,
                 source.QrTtl,
-                source.PaymentPurpose,
-                source.TakeTax,
-                source.TotalTaxAmount);
+                source.PaymentPurpose);
         }
 
         public static PA.GetStatusQrcOperationsResponse Convert(this Sbp.SbpNspkResponse<Sbp.GetStatusQRCOperationsResponse[]> source)
@@ -66,6 +67,11 @@ namespace iikoTransport.SbpService.Converters.PublicApi
         public static PA.SearchMerchantDataResponse Convert(this Sbp.SbpNspkResponse<SbpMerchants.SearchMerchantDataResponse> source)
         {
             return new PA.SearchMerchantDataResponse(source.Code, source.Message, source.Data?.Convert());
+        }
+
+        public static PA.GetMerchantDataResponse Convert(this Sbp.SbpNspkResponse<SbpMerchants.GetMerchantDataResponse> source)
+        {
+            return new PA.GetMerchantDataResponse(source.Code, source.Message, source.Data?.Convert());
         }
 
         private static PA.SetNewAccountData Convert(this Sbp.SetNewAccountResponse source)
@@ -112,6 +118,15 @@ namespace iikoTransport.SbpService.Converters.PublicApi
         private static PA.Image Convert(this Sbp.Image source)
         {
             return new PA.Image(source.MediaType, source.Content);
+        }
+
+        private static PA.GetMerchantData Convert(this SbpMerchants.GetMerchantDataResponse source)
+        {
+            return new PA.GetMerchantData(
+                source.MerchantId,
+                source.BrandName,
+                source.Mcc,
+                source.Address);
         }
 
         private static PA.SearchMerchantData Convert(this SbpMerchants.SearchMerchantDataResponse source)

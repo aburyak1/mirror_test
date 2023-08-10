@@ -10,38 +10,40 @@ namespace iikoTransport.SbpService.Converters.FrontPlugin
     /// </summary>
     public static class SbpOperationsToFrontPluginConverters
     {
+        private const string QrStaticType = "01";
+        private const string QrDynamicType = "02";
+        
         public static Front.PaymentLinkPayloadResponse Convert(this Sbp.SbpNspkResponse<Sbp.QrcPayloadResponse> source)
         {
             return new Front.PaymentLinkPayloadResponse(source.Code, source.Message, source.Data?.Convert());
         }
 
-        public static Sbp.CreateAndGetOneTimePaymentLinkPayloadForB2BRequest Convert(
+        public static Sbp.CreateQRCRequest Convert(
             this Front.CreateOneTimePaymentLinkRequest source, SbpSetting settings, string agentId)
         {
-            return new Sbp.CreateAndGetOneTimePaymentLinkPayloadForB2BRequest(
+            return new Sbp.CreateQRCRequest(
                 agentId,
                 settings.MemberId,
                 settings.Account,
                 settings.MerchantId,
-                source.Amount.ToString(),
+                QrDynamicType,
+                source.Amount,
                 source.QrTtl,
-                source.PaymentPurpose,
-                source.TakeTax,
-                source.TotalTaxAmount);
+                source.PaymentPurpose);
         }
 
-        public static Sbp.CreateAndGetReusablePaymentLinkPayloadForB2BRequest Convert(
+        public static Sbp.CreateQRCRequest Convert(
             this Front.CreateReusablePaymentLinkRequest source, SbpSetting settings, string agentId)
         {
-            return new Sbp.CreateAndGetReusablePaymentLinkPayloadForB2BRequest(
+            return new Sbp.CreateQRCRequest(
                 agentId,
                 settings.MemberId,
                 settings.Account,
                 settings.MerchantId,
+                QrStaticType,
                 source.Amount,
-                source.PaymentPurpose,
-                source.TakeTax,
-                source.TotalTaxAmount);
+                null,
+                source.PaymentPurpose);
         }
 
         public static Front.GetStatusQrcOperationsResponse Convert(this Sbp.SbpNspkResponse<Sbp.GetStatusQRCOperationsResponse[]> source)

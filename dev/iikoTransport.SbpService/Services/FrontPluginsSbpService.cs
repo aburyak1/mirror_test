@@ -43,7 +43,7 @@ namespace iikoTransport.SbpService.Services
             var tgId = GetTerminalGroupUocId(call.Context);
             var setting = await settingsStorage.Get(tgId, call.Context.CancellationToken);
             var requestToSbp = request.Convert(setting, sbpClient.AgentId);
-            var response = await sbpClient.CreateAndGetOneTimePaymentLinkPayloadForB2B(call.Context.CorrelationId, requestToSbp, request.MediaType,
+            var response = await sbpClient.CreateQRC(call.Context.CorrelationId, requestToSbp, request.MediaType,
                 request.Width, request.Height);
 
             var terminalId = GetTerminalId(call.Context);
@@ -60,7 +60,7 @@ namespace iikoTransport.SbpService.Services
             var tgId = GetTerminalGroupUocId(call.Context);
             var setting = await settingsStorage.Get(tgId, call.Context.CancellationToken);
             var requestToSbp = request.Convert(setting, sbpClient.AgentId);
-            var response = await sbpClient.CreateAndGetReusablePaymentLinkPayloadForB2B(call.Context.CorrelationId, requestToSbp, request.MediaType,
+            var response = await sbpClient.CreateQRC(call.Context.CorrelationId, requestToSbp, request.MediaType,
                 request.Width, request.Height);
 
             var terminalId = GetTerminalId(call.Context);
