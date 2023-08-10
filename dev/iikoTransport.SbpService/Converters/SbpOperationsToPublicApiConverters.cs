@@ -11,6 +11,8 @@ namespace iikoTransport.SbpService.Converters.PublicApi
     /// </summary>
     public static class SbpOperationsToPublicApiConverters
     {
+        private const string QrDynamicType = "02";
+        
         public static PA.PaymentLinkPayloadResponse Convert(this Sbp.SbpNspkResponse<Sbp.QrcPayloadResponse> source)
         {
             return new PA.PaymentLinkPayloadResponse(source.Code, source.Message, source.Data?.Convert());
@@ -24,7 +26,7 @@ namespace iikoTransport.SbpService.Converters.PublicApi
                 settings.MemberId,
                 settings.Account,
                 settings.MerchantId,
-                "02",
+                QrDynamicType,
                 source.Amount,
                 source.QrTtl,
                 source.PaymentPurpose);

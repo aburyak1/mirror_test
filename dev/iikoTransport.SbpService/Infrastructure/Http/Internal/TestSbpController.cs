@@ -42,21 +42,13 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         [HttpGet]
         public async Task<string> TestStart(int type, string testNumber, string? qrcId = null)
         {
-            string uriDetails;
-            switch (type)
+            string uriDetails = type switch
             {
-                case 1:
-                    uriDetails = TestStartUri1;
-                    break;
-                case 2:
-                    uriDetails = TestStartUri2;
-                    break;
-                case 3:
-                    uriDetails = TestStartUri3;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+                1 => TestStartUri1,
+                2 => TestStartUri2,
+                3 => TestStartUri3,
+                _ => throw new NotImplementedException()
+            };
             uriDetails += testNumber;
             if (!string.IsNullOrWhiteSpace(qrcId))
             {

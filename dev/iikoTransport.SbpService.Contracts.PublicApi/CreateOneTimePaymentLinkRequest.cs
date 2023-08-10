@@ -14,7 +14,7 @@ namespace iikoTransport.SbpService.Contracts.PublicApi
         {
             OrganizationId = organizationId;
             TerminalGroupId = terminalGroupId;
-            Amount = amount;
+            Amount = amount ?? throw new ArgumentNullException(nameof(amount));
             PaymentPurpose = paymentPurpose;
             QrTtl = qrTtl;
             MediaType = mediaType;

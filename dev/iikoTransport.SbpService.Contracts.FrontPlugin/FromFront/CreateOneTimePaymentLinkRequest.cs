@@ -12,7 +12,7 @@ namespace iikoTransport.SbpService.Contracts.FrontPlugin.FromFront
         public CreateOneTimePaymentLinkRequest(string amount, string? paymentPurpose, int? qrTtl = null, 
             string? mediaType = null, int? width = null, int? height = null)
         {
-            Amount = amount;
+            Amount = amount ?? throw new ArgumentNullException(nameof(amount));
             PaymentPurpose = paymentPurpose;
             QrTtl = qrTtl;
             MediaType = mediaType;

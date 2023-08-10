@@ -10,6 +10,9 @@ namespace iikoTransport.SbpService.Converters.FrontPlugin
     /// </summary>
     public static class SbpOperationsToFrontPluginConverters
     {
+        private const string QrStaticType = "01";
+        private const string QrDynamicType = "02";
+        
         public static Front.PaymentLinkPayloadResponse Convert(this Sbp.SbpNspkResponse<Sbp.QrcPayloadResponse> source)
         {
             return new Front.PaymentLinkPayloadResponse(source.Code, source.Message, source.Data?.Convert());
@@ -23,7 +26,7 @@ namespace iikoTransport.SbpService.Converters.FrontPlugin
                 settings.MemberId,
                 settings.Account,
                 settings.MerchantId,
-                "02",
+                QrDynamicType,
                 source.Amount,
                 source.QrTtl,
                 source.PaymentPurpose);
@@ -37,7 +40,7 @@ namespace iikoTransport.SbpService.Converters.FrontPlugin
                 settings.MemberId,
                 settings.Account,
                 settings.MerchantId,
-                "01",
+                QrStaticType,
                 source.Amount,
                 null,
                 source.PaymentPurpose);
