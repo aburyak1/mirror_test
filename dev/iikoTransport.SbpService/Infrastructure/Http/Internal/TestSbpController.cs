@@ -21,10 +21,8 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         private readonly IFrontPluginsSbpService frontPluginsSbpService;
         private readonly IPublicApiSbpService publicApiSbpService;
         private readonly SbpNspkClient sbpClient;
-        private const string TestStartUri1 = "https://agent.sbp-cert3.cbrpay.ru/test/start/";
-        private const string TestStartUri2 = "https://agent.sbpcert3.cbrpay.ru/test/start/";
-        private const string TestStartUri3 = "https://sbpgs-cert1.cbrpay.ru:9443/test/start/";
-        private const string TestsStatusUri = "https://sbpgs-cert3.cbrpay.ru:9443/tests/status/agent";
+        private const string TestStartUri = "https://agent.sbp-cert3.cbrpay.ru/test/start/";
+        private const string TestsStatusUri = "https://agent.sbp-cert3.cbrpay.ru/tests/status/agent";
 
         public TestSbpController(IFrontPluginsSbpService frontPluginsSbpService, IPublicApiSbpService publicApiSbpService, SbpNspkClient sbpClient)
         {
@@ -40,16 +38,9 @@ namespace iikoTransport.SbpService.Infrastructure.Http.Internal
         }
         
         [HttpGet]
-        public async Task<string> TestStart(int type, string testNumber, string? qrcId = null)
+        public async Task<string> TestStart(string testNumber, string? qrcId = null)
         {
-            string uriDetails = type switch
-            {
-                1 => TestStartUri1,
-                2 => TestStartUri2,
-                3 => TestStartUri3,
-                _ => throw new NotImplementedException()
-            };
-            uriDetails += testNumber;
+            var uriDetails = TestStartUri + testNumber;
             if (!string.IsNullOrWhiteSpace(qrcId))
             {
                 uriDetails += $"&userQR={qrcId}";
