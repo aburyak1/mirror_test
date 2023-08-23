@@ -32,6 +32,7 @@ namespace iikoTransport.SbpService
             ConfigureAsync(app.ApplicationServices)
                 .GetAwaiter()
                 .GetResult();
+			// ITS SYRVE FROM GITHUB
         }
 
         private static async Task ConfigureAsync(IServiceProvider serviceProvider)
